@@ -4,7 +4,7 @@
     Please send an exchange offer to another player and respond to the offers of other players to exchange points.
     </p>
 
-    <form id="sendOffer" onsubmit="sendOffer()">
+    <form id="sendOffer">
         <label for="recipient">Chose recipient:</label>
         <select name="recipient" id="recipient" required>
             <option value="1">Player 1</option>
@@ -17,7 +17,7 @@
         <input type="number" id="offer" name="offer" value="" max="10" min="0" required><br>
         <label for="demand">Demand:</label>
         <input type="number" id="demand" name="demand" value="" max="10" min="0" required><br>
-        <input type="submit" value="Send offer">
+        <input type="button" value="Send offer" id="button_send">
     </form>
 
     <table id="received_table">
@@ -30,38 +30,43 @@
 
     </table>
 
-    {{ formfields }}
-
     {{ next_button }}
+
+{{ formfield_errors 'exchange_partner' }}
+{{ formfield_errors 'send' }}
+{{ formfield_errors 'receive' }}
 
 {{ endblock }}
 
+{% block scripts %}
 <script>
-    const form = document.getElementById('sendOffer')
+    const form = document.getElementById('sendOffer');
+    document.getElementById('button_send').onclick = sendOffer;
     const received_table = document.getElementById('received_table')
 
-    function sendOffer() {
-        let recipient = form.elements['recipient']
-        let offer = form.elements['offer']
-        let demand = form.elements['demand']
-        liveSend([recipient, offer, demand])
+    function sendOffer(event) {
+        let recipient = document.getElementById('recipient').value;
+        let offer = document.getElementById('offer').value;
+        let demand = document.getElementById('demand').value;
+        liveSend([recipient, offer, demand]);
     }
 
     function liveRecv(data){
-        receiveOffer(data[0], data[1], data[2])
+        receiveOffer(data[0], data[1], data[2]);
     }
 
     function receiveOffer(sender, offer, demand){
-        var row = received_table.insertRow(-1)
-        var cell_player = row.insertCell(0)
-        var cell_offer = row.insertCell(1)
-        var cell_demand = row.insertCell(2)
-        cell_player.innerHTML = 'Participant ' + sender
-        cell_offer.innerHTML = offer
-        cell_demand.innerHTML = demand
+        var row = received_table.insertRow(-1);
+        var cell_player = row.insertCell(0);
+        var cell_offer = row.insertCell(1);
+        var cell_demand = row.insertCell(2);
+        cell_player.innerHTML = 'Participant ' + sender;
+        cell_offer.innerHTML = offer;
+        cell_demand.innerHTML = demand;
 
-        var cell_accept_decline = row.insertCell(3)
-        cell_accept_decline.innerHTML = '<button type="button">Accept</button><br><button type="button">Decline</button>'
+        var cell_accept_decline = row.insertCell(3);
+        cell_accept_decline.innerHTML = '<button type="button">Accept</button><br><button type="button">Decline</button>';
     }
 
 </script>
+{{ endblock }}

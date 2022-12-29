@@ -3,9 +3,10 @@ from os import environ
 SESSION_CONFIGS = [
      dict(
          name='EcoEx_RS',
+         display_name="Economic Exchange and Reputation Systems",
          app_sequence=['negotiation'],
          num_demo_participants=6,
-     ),
+     )
 ]
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs

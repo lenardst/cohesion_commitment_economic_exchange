@@ -3,10 +3,14 @@ from otree.api import *
 
 doc = """Negotiation between players"""
 
+
 class C(BaseConstants):
     NAME_IN_URL = 'negotiation'
     PLAYERS_PER_GROUP = 6
     NUM_ROUNDS = 30
+
+pass
+
 
 class Subsession(BaseSubsession):
     pass
@@ -32,11 +36,11 @@ class Player(BasePlayer):
 class Negotiation(Page):
     form_model = 'player'
     form_fields = ['exchange_partner', 'send', 'receive']
-    timeout_seconds = 180
+    # timeout_seconds = 180
 
     @staticmethod
     def live_method(player, data):
-        return{data[0]: [player.id_in_group, data[1], data[2]]}
+        return{int(data[0]): [player.id_in_group, data[1], data[2]]}
 
     pass
 
@@ -55,4 +59,4 @@ class WaitAfterExchange(WaitPage):
     pass
 
 
-page_sequence = ['Negotiation', 'WaitForExchange', 'Deviation', 'WaitAfterExchange']
+page_sequence = [Negotiation, WaitForExchange, Deviation, WaitAfterExchange]
