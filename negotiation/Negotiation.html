@@ -1,22 +1,38 @@
 {{ block title }}Negotiation{{ endblock }}
 {{ block content }}
+
+    <div id="reputation">
+        <table id="reputation_table">
+            <table>
+  <tr>
+    <th>Participant</th>
+    <th>Average Deviation</th>
+    <th>List of Deviations</th>
+  </tr>
+        {{ for reputation in reputation_list }}
+    <tr>
+        <td>Participant {{ reputation_list.player }}</td>
+        <td>Participant {{ reputation_list.reputation_mean }} </td>
+        <td>{{ reputation_list.reputation_list }}</td>
+    </tr>
+        {{ endfor }}
+            </table>
+    </div>
+
+
+    <div id="negotiation">
     <p>
     Please send an exchange offer to another player and respond to the offers of other players to exchange points.
     </p>
 
     <form id="sendOffer">
         <label for="recipient">Chose recipient:</label>
-        <select name="recipient" id="recipient" required>
-            <option value="1">Player 1</option>
-            <option value="2">Player 2</option>
-            <option value="3">Player 3</option>
-            <option value="4">Player 4</option>
-            <option value="5">Player 5</option>
+        <select name="recipient" id="recipient">
         </select><br>
         <label for="offer">Offer:</label>
-        <input type="number" id="offer" name="offer" value="" max="10" min="0" required><br>
+        <input type="number" id="offer" name="offer" value="" max="10" min="0"><br>
         <label for="demand">Demand:</label>
-        <input type="number" id="demand" name="demand" value="" max="10" min="0" required><br>
+        <input type="number" id="demand" name="demand" value="" max="10" min="0"><br>
         <input type="button" value="Send offer" id="button_send">
     </form>
 
@@ -29,12 +45,9 @@
   </tr>
 
     </table>
+        </div>
 
-    {{ next_button }}
-
-{{ formfield_errors 'exchange_partner' }}
-{{ formfield_errors 'send' }}
-{{ formfield_errors 'receive' }}
+    <p id="display-exchange"> </p>
 
 {{ endblock }}
 
@@ -43,20 +56,37 @@
     const form = document.getElementById('sendOffer');
     document.getElementById('button_send').onclick = sendOffer;
     const received_table = document.getElementById('received_table')
+    let available_players = js_vars.available_players
+    window.onload = loadAvailablePlayers
 
     function sendOffer(event) {
         let recipient = document.getElementById('recipient').value;
         let offer = document.getElementById('offer').value;
         let demand = document.getElementById('demand').value;
-        liveSend([recipient, offer, demand]);
+        liveSend(['O',recipient, offer, demand]); // O for create offer
     }
 
-    function liveRecv(data){
-        receiveOffer(data[0], data[1], data[2]);
+    function liveRecv(data){ // First list item of data is the type of action
+        console.log(data)
+        if (data[0] == 'O'){
+            receiveOffer(data[1], data[2], data[3], data[4]);
+        } else if (data[0] == 'C'){
+            for (let o = 0; o < data[1].length; o++){
+                closeOffer(data[1][o]);
+            }
+            hidePlayers(data[2]);
+            loadAvailablePlayers();
+        } else if (data[0] == 'A'){
+            displayExchange(data[1], data[2], data[3]);
+        } else if (data[0] == 'N'){
+            document.getElementById("form").submit();
+        }
     }
 
-    function receiveOffer(sender, offer, demand){
+    function receiveOffer(offer_id, sender, offer, demand){
+        console.log(offer_id)
         var row = received_table.insertRow(-1);
+        row.id = 'received_row' + toString(offer_id)
         var cell_player = row.insertCell(0);
         var cell_offer = row.insertCell(1);
         var cell_demand = row.insertCell(2);
@@ -65,8 +95,63 @@
         cell_demand.innerHTML = demand;
 
         var cell_accept_decline = row.insertCell(3);
-        cell_accept_decline.innerHTML = '<button type="button">Accept</button><br><button type="button">Decline</button>';
+        cell_accept_decline.innerHTML = '<button type="button" id="accept_' + offer_id + '" onclick="acceptOffer('+offer_id+')">Accept</button><br><button type="button" id="decline_' + offer_id + '" onclick="declineOffer('+offer_id+')">Decline</button>';
     }
+
+    function declineOffer(offer_id){
+        // Remove offer from the list
+        closeOffer(offer_id);
+        // Send to server
+        liveSend(['D', offer_id]) // D for decline
+    }
+
+    function acceptOffer(offer_id){
+        // Send to server
+        liveSend(['A', offer_id]); // A for accept
+    }
+
+    function closeOffer(offer_id){
+        var row = document.getElementById('received_row'+ toString(offer_id))
+        if (row != null){
+            received_table.deleteRow(row.rowIndex);
+            console.log(offer_id + " closed");
+        }
+    }
+
+    function hidePlayers(player_list){
+        console.log('Hide players:' + player_list)
+        for (var p=0; p < player_list.length; p++){
+            var index = available_players.indexOf(player_list[p])
+            available_players.splice(index, 1)
+        }
+    }
+
+    function loadAvailablePlayers(){
+        console.log(available_players)
+        document.getElementById('recipient').innerHTML = ''
+        $.each(available_players, function(index, number){
+            var option = document.createElement('option');
+            option.innerHTML = 'Participant ' + number;
+            option.value = number;
+            document.getElementById('recipient').appendChild(option);
+        });
+    }
+
+    function displayExchange(partner, send, receive){
+        document.getElementById('negotiation').style.display = 'none';
+        document.getElementById('display-exchange').innerHTML = 'You have agreed with participant ' + partner + ' to send ' + send + ' units to receive ' + receive
++ ' units.'};
+
 
 </script>
 {{ endblock }}
+
+{% block style %}
+<style>
+  #reputation_table{
+    display: flex;
+    flex-direction: row;
+  }
+</style>
+{{ endblock }}
+

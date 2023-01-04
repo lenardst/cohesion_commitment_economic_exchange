@@ -1,14 +1,50 @@
 {{ block title }}Sending{{ endblock }}
 {{ block content }}
 
-    {{ include C.INSTRUCTIONS_TEMPLATE }}
-
     <p>
-    You are Participant A. Now you have {{C.ENDOWMENT}}.
+    You have agreed to send {{player.send}} units to participant {{player.exchange_partner}}. You may deviate from this agreement by sending up to three points more or less.
     </p>
+    <div id="value"></div>
+    <input id="slider" type="range" min="{{player.send}}-3" max="3" value="{{player.send}}" step="1" required>
 
-    {{ formfields }}
+    {{ form.deviation }}
 
     {{ next_button }}
 
 {{ endblock }}
+
+{% block style %}
+<style>
+input[type=range]::-webkit-slider-thumb {
+  background-color: #4caf50;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  background-color: #ddd;
+}
+
+#id_deviation {
+  display: none;
+}
+
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  var slider = document.getElementById("slider");
+  slider.min = js_vars.slider_min;
+  slider.max = js_vars.slider_max;
+  slider.value = js_vars.slider_middle;
+  var value = document.getElementById("value");
+  var deviation = document.getElementById('id_deviation');
+
+  value.innerHTML = slider.value;
+
+  slider.oninput = function() {
+    value.innerHTML = this.value;
+    deviation.value = this.value - js_vars.slider_middle;
+  }
+</script>
+{% endblock %}
