@@ -1,5 +1,5 @@
 from otree.api import *
-from Reputation import Reputation
+from negotiation.reputation import Reputation
 
 
 doc = """Negotiation between players"""
@@ -28,7 +28,7 @@ class Player(BasePlayer):
     exchange_partner = models.IntegerField()
     send = models.IntegerField()
     receive = models.IntegerField()
-    deviation = models.IntegerField()
+    deviation = models.IntegerField(min=-3)
     deviation_partner = models.IntegerField()
     round_net = models.IntegerField()
     pass
@@ -60,7 +60,7 @@ class Negotiation(Page):
     def vars_for_template(player: Player):
         reputation_list = []
         for p in player.get_others_in_subsession():
-            deviations = [i.deviation for i in p.in_previous_rounds if C.REPUTATION_SYSTEM or i.exchange_partner is player.id_in_group]
+            deviations = [i.deviation for i in p.in_previous_rounds() if C.REPUTATION_SYSTEM or i.exchange_partner is player.id_in_group]
             reputation_list.append(Reputation(p.id_in_group, deviations))
         return dict(
             reputation_list=reputation_list
@@ -102,7 +102,7 @@ class Negotiation(Page):
                     closing_offers_id = [o.offer_id for o in closing_offers]
                     available_players = len([p.id_in_group for p in player.get_others_in_subsession() if p.agreed is False])
                     other_players = [i for i in [1, 2, 3, 4, 5, 6] if i != offer.receiver.id_in_group and i != offer.sender.id_in_group]
-                    if available_players is 0:
+                    if available_players==0:
                         return{0: ['N']}
                     else:
                         return{other_players[0]: ['C', closing_offers_id, [offer.sender.id_in_group, offer.receiver.id_in_group]],
@@ -141,8 +141,9 @@ class Deviation(Page):
 
 class WaitAfterExchange(WaitPage):
     @staticmethod
-    def before_next_page(player):
-        player.deviation_partner = player.exchange_partner.deviation
+    def after_all_players_arrive(group):
+        for p in group.get_players():
+            p.deviation_partner = p.group.get_player_by_id(p.exchange_partner).deviation
     pass
 
 

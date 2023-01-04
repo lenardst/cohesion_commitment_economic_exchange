@@ -3,7 +3,6 @@
 
     <div id="reputation">
         <table id="reputation_table">
-            <table>
   <tr>
     <th>Participant</th>
     <th>Average Deviation</th>
@@ -11,9 +10,9 @@
   </tr>
         {{ for reputation in reputation_list }}
     <tr>
-        <td>Participant {{ reputation_list.player }}</td>
-        <td>Participant {{ reputation_list.reputation_mean }} </td>
-        <td>{{ reputation_list.reputation_list }}</td>
+        <td>Participant {{ reputation.player_id }}</td>
+        <td>{{ reputation.reputation_mean }} </td>
+        <td>{{ reputation.reputation_list }}</td>
     </tr>
         {{ endfor }}
             </table>
@@ -151,7 +150,14 @@
   #reputation_table{
     display: flex;
     flex-direction: row;
+      text-align: center;
   }
+
+   td, th {
+    border: 1px solid black;
+    padding: 5px;
+  }
+
 </style>
 {{ endblock }}
 
