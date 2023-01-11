@@ -1,7 +1,11 @@
 {{ block title }}Negotiation{{ endblock }}
 {{ block content }}
+
     <p>
     Please send exchange offers to other participants and respond to the offers of other players to exchange points. You can base your decisions on the information about the other participants' behavior in previous rounds in the table below. Once you accept an offer or one of your offers is accepted by another participant, you cannot change your exchange anymore.
+    </p>
+
+    <p> You have received <b>20 units</b> for this round. You earn two points for each unit you receive through exchange and one point for each unit of your initial budget.
     </p>
 
     <div id="reputation">
@@ -25,15 +29,15 @@
 
     <div id="negotiation">
         <p><b>Send offers</b></p>
-        <p>You can send as many offers as you wish. However, you can only send a follow-up offer to a player, if he or she has declined your previous one.</p>
+        <p>You can send as many offers as you wish. However, you can only send a follow-up offer to a player, if he or she has declined your previous one. Remeber that the offered and the demanded amount must add up to 20.</p>
     <form id="sendOffer">
         <label for="recipient">Chose recipient:</label>
         <select name="recipient" id="recipient">
         </select><br>
         <label for="offer">Offer:</label>
-        <input type="number" id="offer" name="offer" value="" max="10" min="0"><br>
+        <input type="number" id="offer" name="offer" value="" max="20" min="0"><br>
         <label for="demand">Demand:</label>
-        <input type="number" id="demand" name="demand" value="" max="10" min="0"><br>
+        <input type="number" id="demand" name="demand" value="" max="20" min="0" disabled><br>
         <input type="button" value="Send offer" id="button_send">
     </form>
 
@@ -64,6 +68,7 @@
     const received_table = document.getElementById('received_table')
     let available_players = js_vars.available_players
     window.onload = loadAvailablePlayers
+    document.getElementById('offer').addEventListener('change', changeDemand)
 
     function sendOffer(event) {
         let recipient = document.getElementById('recipient').value;
@@ -148,6 +153,10 @@
         document.getElementById('display-exchange').innerHTML = 'You have agreed with participant ' + partner + ' to send ' + send + ' units to receive ' + receive
 + ' units.'};
 
+
+    function changeDemand(){
+        document.getElementById('demand').value = 20 - document.getElementById('offer').value
+    }
 
 </script>
 {{ endblock }}

@@ -4,7 +4,7 @@ SESSION_CONFIGS = [
      dict(
          name='EcoEx_RS',
          display_name="Economic Exchange and Reputation Systems",
-         app_sequence=['negotiation'],
+         app_sequence=['instruction', 'negotiation'],
          num_demo_participants=6,
      )
 ]

@@ -133,7 +133,7 @@ class Deviation(Page):
     def js_vars(player):
         return dict(
             slider_min=max(player.send - 3, 0),
-            slider_max=player.send + 3,
+            slider_max=min(player.send + 3, 20),
             slider_middle=player.send
         )
     pass
@@ -146,5 +146,16 @@ class WaitAfterExchange(WaitPage):
             p.deviation_partner = p.group.get_player_by_id(p.exchange_partner).deviation
     pass
 
+class Result(Page):
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(
+            net_receive=player.receive - player.deviation_partner,
+            points_form_partner=(player.receive - player.deviation_partner)*2,
+            points=(player.receive + player.deviation_partner)*2 + 20 - (player.send + player.deviation),
+            remaining_budget=20 - (player.send + player.deviation)
+        )
+    pass
 
-page_sequence = [Negotiation, WaitForExchange, Deviation, WaitAfterExchange]
+
+page_sequence = [Negotiation, WaitForExchange, Deviation, WaitAfterExchange, Result]

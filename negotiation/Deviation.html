@@ -9,8 +9,9 @@
 
     {{ form.deviation }}
 
-    {{ next_button }}
+<p id="result"></p>
 
+    {{ next_button }}
 {{ endblock }}
 
 {% block style %}
@@ -45,6 +46,7 @@ input[type=range]::-webkit-slider-runnable-track {
   slider.oninput = function() {
     value.innerHTML = this.value;
     deviation.value = this.value - js_vars.slider_middle;
+    document.getElementById('result').innerHTML = "Send <b>" + this.value + " units</b> instead of {{player.send}} units."
   }
 </script>
 {% endblock %}
