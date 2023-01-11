@@ -1,0 +1,11 @@
+{{ block title }}
+    Result
+{{ endblock }}
+{{ block content }}
+
+<p>You receive <b>{{points}} points</b> for this round. {{remaining_budget}} units have remained from your budget resulting in {{remaining_budget}} points. Participant {{player.exchange_partner}} sent {{net_receive}} resulting in {{points_form_partner}} points. He or she deviated from your agreement by {{player.deviation_partner}}. </p>
+<p>You will learn about your total points in the end of the experiment.</p>
+
+    {{ next_button }}
+
+{{ endblock }}

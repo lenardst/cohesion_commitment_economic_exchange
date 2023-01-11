@@ -1,0 +1,112 @@
+{{ block title }}
+    Gifts
+{{ endblock }}
+{{ block content }}
+
+<p> You may now send gifts to other participants. You receive 50 points to gift. You can gift up to 10 points per player. For each gifted point, the recipient will gain 3 points. Every point you do not gift will be added to your account.</p>
+
+<hr>
+    {{ for p in other_players }}
+    Gift between 0 and 10 points to participant {{p}}:
+    <p id="value{{p}}"></p>
+    <input id="gift_slider{{p}}" type="range" min="0" max="10" value="0" step="1">
+    <hr>
+    {{ endfor }}
+    {{ form.gift1 }}
+    {{ form.gift2 }}
+    {{ form.gift3 }}
+    {{ form.gift4 }}
+    {{ form.gift5 }}
+    {{ form.gift6 }}
+
+    {{ next_button }}
+
+{{ endblock }}
+
+
+{% block style %}
+<style>
+input[type=range]::-webkit-slider-thumb {
+  background-color: #4caf50;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  background-color: #ddd;
+}
+
+#id_gift1, #id_gift2, #id_gift3, #id_gift4, #id_gift5, #id_gift6{
+  display: none;
+}
+
+</style>
+{{ endblock }}
+
+{% block scripts %}
+
+<script>
+    var player_list = js_vars.other_players;
+    for (var p=0; p < player_list.length; p++){
+
+    }
+    if (player_list.includes(1)){
+        var slider1 = document.getElementById("gift_slider1");
+        var value1 = document.getElementById("value1");
+        var deviation1 = document.getElementById('id_gift1');
+        slider1.oninput = function(){
+            value1.innerHTML = this.value;
+            deviation1.value = this.value;
+        }
+    }
+
+    if (player_list.includes(2)){
+        var slider2 = document.getElementById("gift_slider2");
+        var value2 = document.getElementById("value2");
+        var deviation2 = document.getElementById('id_gift2');
+        slider2.oninput = function(){
+            value2.innerHTML = this.value;
+            deviation2.value = this.value;
+        }
+    }
+
+    if (player_list.includes(3)){
+        var slider3 = document.getElementById("gift_slider3");
+        var value3 = document.getElementById("value3");
+        var deviation3 = document.getElementById('id_gift3');
+        slider3.oninput = function(){
+            value3.innerHTML = this.value;
+            deviation3.value = this.value;
+        }
+    }
+
+    if (player_list.includes(4)){
+        var slider4 = document.getElementById("gift_slider4");
+        var value4 = document.getElementById("value4");
+        var deviation4 = document.getElementById('id_gift4');
+        slider4.oninput = function(){
+            value4.innerHTML = this.value;
+            deviation4.value = this.value;
+        }
+    }
+
+    if (player_list.includes(5)){
+        var slider5 = document.getElementById("gift_slider5");
+        var value5 = document.getElementById("value5");
+        var deviation5 = document.getElementById('id_gift5');
+        slider5.oninput = function(){
+            value5.innerHTML = this.value;
+            deviation5.value = this.value;
+        }
+    }
+
+    if (player_list.includes(6)){
+        var slider6 = document.getElementById("gift_slider6");
+        var value6 = document.getElementById("value6");
+        var deviation6 = document.getElementById('id_gift6');
+        slider6.oninput = function(){
+            value6.innerHTML = this.value;
+            deviation6.value = this.value;
+        }
+    }
+</script>
+
+{% endblock %}
