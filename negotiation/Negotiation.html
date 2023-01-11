@@ -1,5 +1,8 @@
 {{ block title }}Negotiation{{ endblock }}
 {{ block content }}
+    <p>
+    Please send exchange offers to other participants and respond to the offers of other players to exchange points. You can base your decisions on the information about the other participants' behavior in previous rounds in the table below. Once you accept an offer or one of your offers is accepted by another participant, you cannot change your exchange anymore.
+    </p>
 
     <div id="reputation">
         <table id="reputation_table">
@@ -18,12 +21,11 @@
             </table>
     </div>
 
+    <hr>
 
     <div id="negotiation">
-    <p>
-    Please send an exchange offer to another player and respond to the offers of other players to exchange points.
-    </p>
-
+        <p><b>Send offers</b></p>
+        <p>You can send as many offers as you wish. However, you can only send a follow-up offer to a player, if he or she has declined your previous one.</p>
     <form id="sendOffer">
         <label for="recipient">Chose recipient:</label>
         <select name="recipient" id="recipient">
@@ -35,7 +37,12 @@
         <input type="button" value="Send offer" id="button_send">
     </form>
 
+        <hr>
+
     <table id="received_table">
+        <p><b>Accept or decline offers</b></p>
+        <p>If you decline an offer, the sender can send you another offer. If you accept an offer, all your pending offers will be closed.</p>
+
   <tr>
       <th>Sender</th>
       <th>Receive</th>
