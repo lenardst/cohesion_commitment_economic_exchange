@@ -12,12 +12,14 @@
         <table id="reputation_table">
   <tr>
     <th>Participant</th>
+      <th>Select for Offer</th>
     <th>Average Deviation</th>
     <th>List of Deviations</th>
   </tr>
         {{ for reputation in reputation_list }}
     <tr>
         <td>Participant {{ reputation.player_id }}</td>
+        <td><button type="button" id="select-button{{ reputation.player_id }}" class="select-button" onclick="selectRecipient({{ reputation.player_id }})" disabled>Select participant {{ reputation.player_id }}</button></td>
         <td>{{ reputation.reputation_mean }} </td>
         <td>{{ reputation.reputation_list }}</td>
     </tr>
@@ -26,23 +28,27 @@
     </div>
 
     <hr>
-
-    <div id="negotiation">
+<div class="container">
+    <div id="negotiation" class="left-half">
         <p><b>Send offers</b></p>
         <p>You can send as many offers as you wish. However, you can only send a follow-up offer to a player, if he or she has declined your previous one. Remeber that the offered and the demanded amount must add up to 20.</p>
-    <form id="sendOffer">
-        <label for="recipient">Chose recipient:</label>
-        <select name="recipient" id="recipient">
-        </select><br>
-        <label for="offer">Offer:</label>
-        <input type="number" id="offer" name="offer" value="" max="20" min="0"><br>
-        <label for="demand">Demand:</label>
-        <input type="number" id="demand" name="demand" value="" max="20" min="0" disabled><br>
-        <input type="button" value="Send offer" id="button_send">
+    <p id="sendOffer">
+        <b><span id="display-recipient"></span></b>
+        <input type="hidden" name="recipient" id="recipient" min="1" max="6">
+        <table id="slider_table">
+            <tr>
+                        <td class="quant-cell-left">Offer: <br><span id="left">10</span></td>
+                        <td class="quant-cell-right">Demand: <br><span id="right">10</span></td>
+            </tr>
+            <tr>
+                        <td colspan="2" id="slider-cell"><input type="range" id="offer" class="offer-slider" name="slider" min="0" max="20" value="10" step="1"></td>
+            </tr>
+                </table>
+        <input type="button" value="Send offer" id="button_send" disabled>
     </form>
     </div>
 
-        <div id="outgoing">
+        <div id="outgoing" class="right-half">
             <p><b>Pending offers</b></p>
                 <table id="sent_table">
                       <tr>
@@ -51,12 +57,10 @@
                         <th>Demanded</th>
                     </tr>
                 </table>
-
         </div>
-
-
-    <div id="incoming">
-        <hr>
+</div>
+    <div id="incoming" class="full-block">
+                <hr>
     <table id="received_table">
         <p><b>Accept or decline offers</b></p>
         <p>If you decline an offer, the sender can send you another offer. If you accept an offer, all your pending offers will be closed.</p>
@@ -67,7 +71,6 @@
       <th>Send</th>
       <th>Accept or Decline</th>
   </tr>
-
     </table>
         </div>
 
@@ -81,13 +84,12 @@
     document.getElementById('button_send').onclick = sendOffer;
     const received_table = document.getElementById('received_table')
     const sent_table = document.getElementById('sent_table')
-    document.getElementById('offer').addEventListener('change', changeDemand)
     window.onload = liveSend('R');
 
     function sendOffer(event) {
         let recipient = document.getElementById('recipient').value;
         let offer = document.getElementById('offer').value;
-        let demand = document.getElementById('demand').value;
+        let demand = 20 - offer;
         liveSend(['O',recipient, offer, demand]); // O for create offer
     }
 
@@ -96,11 +98,13 @@
         if (data[0] == 'R') {
             displayPlayers(data[1]);
             displayPendingOffers(data[2]);
-            displayOpenOffers(data[3])
+            displayOpenOffers(data[3]);
         } else if (data[0] == 'A') { // Offer accepted
             displayExchange(data[1], data[2], data[3]);
         } else if (data[0] == 'N') { // All players agreed
             document.getElementById("form").submit();
+        } else if (data[0] == 'E'){
+            alert(data[1]);
         }
     }
 
@@ -145,13 +149,18 @@
     }
 
    function displayPlayers(player_list){
-        document.getElementById('recipient').innerHTML = ''
+        var buttons = document.getElementsByClassName('select-button')
+        for(var i = 0; i < buttons.length; i++) {
+            buttons[i].disabled = true;
+        }
         $.each(player_list, function(index, number){
-            var option = document.createElement('option');
-            option.innerHTML = 'Participant ' + number;
-            option.value = number;
-            document.getElementById('recipient').appendChild(option);
+            document.getElementById('select-button' + number).removeAttribute('disabled')
         });
+        if (!player_list.includes(document.getElementById('recipient').value)){
+            document.getElementById('recipient').value = "";
+            document.getElementById('display-recipient').innerHTML = "Please chose another participant.";
+            document.getElementById('button_send').disabled = true;
+        }
     }
 
     function displayExchange(partner, send, receive){
@@ -161,10 +170,18 @@
         document.getElementById('display-exchange').innerHTML = 'You have agreed with participant ' + partner + ' to send ' + send + ' units to receive ' + receive
 + ' units.'}
 
-
+    document.getElementById('offer').addEventListener('input', changeDemand)
     function changeDemand(){
-        document.getElementById('demand').value = 20 - document.getElementById('offer').value
+        document.getElementById('left').innerHTML = document.getElementById('offer').value
+        document.getElementById('right').innerHTML = 20 - document.getElementById('offer').value
     }
+
+    function selectRecipient(number) {
+  document.getElementById("recipient").value = number;
+  document.getElementById("display-recipient").innerHTML = "You selected participant " + number + ".";
+  document.getElementById('button_send').removeAttribute('disabled');
+}
+
 
 </script>
 {{ endblock }}
@@ -181,6 +198,42 @@
     border: 1px solid black;
     padding: 5px;
   }
+
+.container {
+  grid-template-columns: 1fr 1fr; /* Two columns with equal width */
+}
+
+
+.left-half {
+    float: left;
+    width: 600px;
+    margin-right: 10px;
+}
+
+
+.right-half {
+    float: left;
+    width: 300px;
+    margin-left: 10px;
+}
+
+.full-block {
+    float: none;
+    display: inline-block;
+}
+
+.offer-slider {
+  width: 400px;
+}
+
+#button_send {
+    margin-top: 10px;
+    width: 400px;
+}
+
+.quant-cell-right{
+    text-align: right;
+}
 
 </style>
 {{ endblock }}
