@@ -40,9 +40,23 @@
         <input type="number" id="demand" name="demand" value="" max="20" min="0" disabled><br>
         <input type="button" value="Send offer" id="button_send">
     </form>
+    </div>
 
+        <div id="outgoing">
+            <p><b>Pending offers</b></p>
+                <table id="sent_table">
+                      <tr>
+                        <th>Recipient</th>
+                        <th>Offered</th>
+                        <th>Demanded</th>
+                    </tr>
+                </table>
+
+        </div>
+
+
+    <div id="incoming">
         <hr>
-
     <table id="received_table">
         <p><b>Accept or decline offers</b></p>
         <p>If you decline an offer, the sender can send you another offer. If you accept an offer, all your pending offers will be closed.</p>
@@ -66,9 +80,9 @@
     const form = document.getElementById('sendOffer');
     document.getElementById('button_send').onclick = sendOffer;
     const received_table = document.getElementById('received_table')
-    let available_players = js_vars.available_players
-    window.onload = loadAvailablePlayers
+    const sent_table = document.getElementById('sent_table')
     document.getElementById('offer').addEventListener('change', changeDemand)
+    window.onload = liveSend('R');
 
     function sendOffer(event) {
         let recipient = document.getElementById('recipient').value;
@@ -77,41 +91,50 @@
         liveSend(['O',recipient, offer, demand]); // O for create offer
     }
 
-    function liveRecv(data){ // First list item of data is the type of action
+    function liveRecv(data) { // First list item of data is the type of action
         console.log(data)
-        if (data[0] == 'O'){
-            receiveOffer(data[1], data[2], data[3], data[4]);
-        } else if (data[0] == 'C'){
-            for (let o = 0; o < data[1].length; o++){
-                closeOffer(data[1][o]);
-            }
-            hidePlayers(data[2]);
-            loadAvailablePlayers();
-        } else if (data[0] == 'A'){
+        if (data[0] == 'R') {
+            displayPlayers(data[1]);
+            displayPendingOffers(data[2]);
+            displayOpenOffers(data[3])
+        } else if (data[0] == 'A') { // Offer accepted
             displayExchange(data[1], data[2], data[3]);
-        } else if (data[0] == 'N'){
+        } else if (data[0] == 'N') { // All players agreed
             document.getElementById("form").submit();
         }
     }
 
-    function receiveOffer(offer_id, sender, offer, demand){
-        console.log(offer_id)
-        var row = received_table.insertRow(-1);
-        row.id = 'received_row' + toString(offer_id)
-        var cell_player = row.insertCell(0);
-        var cell_offer = row.insertCell(1);
-        var cell_demand = row.insertCell(2);
-        cell_player.innerHTML = 'Participant ' + sender;
-        cell_offer.innerHTML = offer;
-        cell_demand.innerHTML = demand;
+    function displayPendingOffers(offer_list){
+        $("#sent_table").find("tr:not(:first)").remove();
+        for (i = 0; offer_list.length > i; i++){
+            var row = sent_table.insertRow(-1);
+            row.id = 'sent_row' + offer_list[i][0];
+            var cell_player = row.insertCell(0);
+            var cell_offer = row.insertCell(1);
+            var cell_demand = row.insertCell(2);
+            cell_player.innerHTML = 'Participant ' + offer_list[i][1];
+            cell_offer.innerHTML = offer_list[i][2];
+            cell_demand.innerHTML = offer_list[i][3];
+        }
+    }
 
-        var cell_accept_decline = row.insertCell(3);
-        cell_accept_decline.innerHTML = '<button type="button" id="accept_' + offer_id + '" onclick="acceptOffer('+offer_id+')">Accept</button><br><button type="button" id="decline_' + offer_id + '" onclick="declineOffer('+offer_id+')">Decline</button>';
+    function displayOpenOffers(offer_list) {
+        $("#received_table").find("tr:not(:first)").remove();
+        for (i = 0; offer_list.length > i; i++) {
+            var row = received_table.insertRow(-1);
+            row.id = 'sent_row' + offer_list[i][0];
+            var cell_player = row.insertCell(0);
+            var cell_offer = row.insertCell(1);
+            var cell_demand = row.insertCell(2);
+            cell_player.innerHTML = 'Participant ' + offer_list[i][1];
+            cell_offer.innerHTML = offer_list[i][2];
+            cell_demand.innerHTML = offer_list[i][3];
+            var cell_accept_decline = row.insertCell(3);
+            cell_accept_decline.innerHTML = '<button type="button" id="accept_' + offer_list[i][0] + '" onclick="acceptOffer(' + offer_list[i][0] + ')">Accept</button><br><button type="button" id="decline_' + offer_list[i][0] + '" onclick="declineOffer(' + offer_list[i][0] + ')">Decline</button>';
+        }
     }
 
     function declineOffer(offer_id){
-        // Remove offer from the list
-        closeOffer(offer_id);
         // Send to server
         liveSend(['D', offer_id]) // D for decline
     }
@@ -121,26 +144,9 @@
         liveSend(['A', offer_id]); // A for accept
     }
 
-    function closeOffer(offer_id){
-        var row = document.getElementById('received_row'+ toString(offer_id))
-        if (row != null){
-            received_table.deleteRow(row.rowIndex);
-            console.log(offer_id + " closed");
-        }
-    }
-
-    function hidePlayers(player_list){
-        console.log('Hide players:' + player_list)
-        for (var p=0; p < player_list.length; p++){
-            var index = available_players.indexOf(player_list[p])
-            available_players.splice(index, 1)
-        }
-    }
-
-    function loadAvailablePlayers(){
-        console.log(available_players)
+   function displayPlayers(player_list){
         document.getElementById('recipient').innerHTML = ''
-        $.each(available_players, function(index, number){
+        $.each(player_list, function(index, number){
             var option = document.createElement('option');
             option.innerHTML = 'Participant ' + number;
             option.value = number;
@@ -150,8 +156,10 @@
 
     function displayExchange(partner, send, receive){
         document.getElementById('negotiation').style.display = 'none';
+        document.getElementById('incoming').style.display = 'none';
+        document.getElementById('outgoing').style.display = 'none';
         document.getElementById('display-exchange').innerHTML = 'You have agreed with participant ' + partner + ' to send ' + send + ' units to receive ' + receive
-+ ' units.'};
++ ' units.'}
 
 
     function changeDemand(){

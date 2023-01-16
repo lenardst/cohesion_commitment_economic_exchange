@@ -1,5 +1,6 @@
 from otree.api import *
 from negotiation.reputation import Reputation
+from negotiation.offer_queries import get_open_offers, get_sent_offers, get_available_players, all_agreed, check_offer_legal, check_acceptance_legal
 
 
 doc = """Negotiation between players"""
@@ -69,54 +70,80 @@ class Negotiation(Page):
     def live_method(player, data):  # Data is a list of values. First value specifies the type of action
         print(str(player.id_in_group) + ',' + str(data))
         if data[0] == 'O':  # O for create offer
-            offer = Offer.create(offer_id=len(Offer.filter())+1, sender=player, receiver=player.group.get_player_by_id(int(data[1])),
-                                 group=player.group, offer=int(data[2]), demand=int(data[3]))
-            print(['O', offer.offer_id, offer.sender.id_in_group, offer.demand, offer.offer])
-            return{offer.receiver.id_in_group: ['O', offer.offer_id, offer.sender.id_in_group, offer.demand, offer.offer]}
+            receiver = player.group.get_player_by_id(int(data[1]))
+            offers = Offer.filter(group=player.group)
+            if check_offer_legal(player, receiver, offers):
+                offer = Offer.create(offer_id=len(Offer.filter())+1, sender=player, receiver=receiver,
+                                     group=player.group, offer=int(data[2]), demand=int(data[3]))
+                print(['O', offer.offer_id, offer.sender.id_in_group, offer.demand, offer.offer])
+                offers = Offer.filter(group=player.group)
+                return{offer.receiver.id_in_group: ['R', get_available_players(offer.receiver, offers), get_sent_offers(offer.receiver, offers), get_open_offers(offer.receiver, offers)],
+                       offer.sender.id_in_group: ['R', get_available_players(offer.sender, offers), get_sent_offers(offer.sender, offers), get_open_offers(offer.sender, offers)]}
+            else:
+                return{player.id_in_group: ['E', 'This offer is not allowed because you sent it to a participant how agreed on an exchange already or one of the offers you sent this participant is still pending.']}
         else:
             if data[0] == 'D':  # D for decline
                 offer = Offer.filter(receiver=player, offer_id=data[1])[0]
                 offer.accepted = False
                 offer.declined = True
                 offer.closed = True
+                offers = Offer.filter(group=player.group)
+                return {offer.receiver.id_in_group: ['R', get_available_players(offer.receiver, offers),
+                                                     get_sent_offers(offer.receiver, offers),
+                                                     get_open_offers(offer.receiver, offers)],
+                        offer.sender.id_in_group: ['R', get_available_players(offer.sender, offers),
+                                                   get_sent_offers(offer.sender, offers),
+                                                   get_open_offers(offer.sender, offers)]}
             else:
                 if data[0] == 'A':  # A for accept
                     offer = Offer.filter(group=player.group, receiver=player, offer_id=data[1])[0]
-                    offer.receiver.agreed = True
-                    offer.sender.agreed = True
-                    offer.accepted = True
-                    offer.declined = False
-                    offer.sender.send = offer.offer
-                    offer.sender.receive = offer.demand
-                    offer.receiver.send = offer.demand
-                    offer.receiver.receive = offer.offer
-                    offer.receiver.exchange_partner = offer.sender.id_in_group
-                    offer.sender.exchange_partner = offer.receiver.id_in_group
-                    # Close all offers where exchange partners are involved
-                    closing_offers = [o for o in Offer.filter(group=player.group) if (o.receiver == offer.receiver or
-                                      o.receiver == offer.sender or o.sender == offer.sender or o.sender == offer.receiver)
-                                      and o.closed==False]
-                    for o in closing_offers:
-                        o.closed = True
-                    closing_offers_id = [o.offer_id for o in closing_offers]
-                    available_players = len([p.id_in_group for p in player.get_others_in_subsession() if p.agreed is False])
-                    other_players = [i for i in [1, 2, 3, 4, 5, 6] if i != offer.receiver.id_in_group and i != offer.sender.id_in_group]
-                    if available_players==0:
-                        return{0: ['N']}
+                    if check_acceptance_legal(offer):
+                        offer.receiver.agreed = True
+                        offer.sender.agreed = True
+                        offer.accepted = True
+                        offer.declined = False
+                        offer.sender.send = offer.offer
+                        offer.sender.receive = offer.demand
+                        offer.receiver.send = offer.demand
+                        offer.receiver.receive = offer.offer
+                        offer.receiver.exchange_partner = offer.sender.id_in_group
+                        offer.sender.exchange_partner = offer.receiver.id_in_group
+                        # Close all offers where exchange partners are involved
+                        closing_offers = [o for o in Offer.filter(group=player.group) if (o.receiver == offer.receiver or
+                                          o.receiver == offer.sender or o.sender == offer.sender or o.sender == offer.receiver)
+                                          and o.closed==False]
+                        for o in closing_offers:
+                            o.closed = True
+                        other_players = [p for p in offer.receiver.get_others_in_subsession() if p.id_in_group is not offer.sender.id_in_group]
+                        if all_agreed(player):
+                            return{0: ['N']}
+                        else:
+                            offers = Offer.filter(group=player.group)
+                            return{other_players[0].id_in_group: ['R', get_available_players(other_players[0], offers),
+                                                         get_sent_offers(other_players[0], offers),
+                                                         get_open_offers(other_players[0], offers)],
+                                   other_players[1].id_in_group: ['R', get_available_players(other_players[1], offers),
+                                                         get_sent_offers(other_players[1], offers),
+                                                         get_open_offers(other_players[1], offers)],
+                                   other_players[2].id_in_group: ['R', get_available_players(other_players[2], offers),
+                                                         get_sent_offers(other_players[2], offers),
+                                                         get_open_offers(other_players[2], offers)],
+                                   other_players[3].id_in_group: ['R', get_available_players(other_players[3], offers),
+                                                         get_sent_offers(other_players[3], offers),
+                                                         get_open_offers(other_players[3], offers)],
+                                   offer.sender.id_in_group: ['A', offer.receiver.id_in_group, offer.offer, offer.demand],
+                                   offer.receiver.id_in_group: ['A', offer.sender.id_in_group, offer.demand, offer.offer]}
                     else:
-                        return{other_players[0]: ['C', closing_offers_id, [offer.sender.id_in_group, offer.receiver.id_in_group]],
-                               other_players[1]: ['C', closing_offers_id, [offer.sender.id_in_group, offer.receiver.id_in_group]],
-                               other_players[2]: ['C', closing_offers_id, [offer.sender.id_in_group, offer.receiver.id_in_group]],
-                               other_players[3]: ['C', closing_offers_id, [offer.sender.id_in_group, offer.receiver.id_in_group]],
-                               offer.sender.id_in_group: ['A', offer.receiver.id_in_group, offer.offer, offer.demand],
-                               offer.receiver.id_in_group: ['A', offer.sender.id_in_group, offer.demand, offer.offer]}
-
-    @staticmethod
-    def js_vars(player):
-        return dict(
-            available_players=[p.id_in_group for p in player.get_others_in_subsession()],
-        )
-
+                        return{player.id_in_group: ['E', 'You accepted an offer that was closed by the sender by accepting another offer.']}
+                else:
+                    if data[0] == 'R':
+                        offers = Offer.filter(group=player.group)
+                        if player.agreed:
+                            return{player.id_in_group: ['A', player.exchange_partner, player.send, player.receive]}
+                        else:
+                            return{player.id_in_group: ['R', get_available_players(player, offers),
+                                                         get_sent_offers(player, offers),
+                                                         get_open_offers(player, offers)]}
     pass
 
 
