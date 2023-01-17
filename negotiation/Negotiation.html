@@ -156,7 +156,9 @@
         $.each(player_list, function(index, number){
             document.getElementById('select-button' + number).removeAttribute('disabled')
         });
-        if (!player_list.includes(document.getElementById('recipient').value)){
+        if (document.getElementById('recipient').value == ""){
+            document.getElementById('display-recipient').innerHTML = "Please chose a participant from the table above.";
+        } else if (!player_list.includes(document.getElementById('recipient').value)){
             document.getElementById('recipient').value = "";
             document.getElementById('display-recipient').innerHTML = "Please chose another participant.";
             document.getElementById('button_send').disabled = true;
@@ -167,7 +169,7 @@
         document.getElementById('negotiation').style.display = 'none';
         document.getElementById('incoming').style.display = 'none';
         document.getElementById('outgoing').style.display = 'none';
-        document.getElementById('display-exchange').innerHTML = 'You have agreed with participant ' + partner + ' to send ' + send + ' units to receive ' + receive
+        document.getElementById('display-exchange').innerHTML = 'You have agreed with participant ' + partner + ' to send ' + send + ' units and to receive ' + receive
 + ' units.'}
 
     document.getElementById('offer').addEventListener('input', changeDemand)

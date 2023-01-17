@@ -54,13 +54,13 @@ class Offer(ExtraModel):
 class Negotiation(Page):
     # form_model = 'player'
     # form_fields = ['exchange_partner', 'send', 'receive']
-    # timeout_seconds = 180
+    timeout_seconds = 90
 
     @staticmethod
     def vars_for_template(player: Player):
         reputation_list = []
         for p in player.get_others_in_subsession():
-            deviations = [i.deviation for i in p.in_previous_rounds() if C.REPUTATION_SYSTEM or i.exchange_partner is player.id_in_group]
+            deviations = [i.field_maybe_none('deviation') for i in p.in_previous_rounds() if C.REPUTATION_SYSTEM or i.field_maybe_none('exchange_partner') is player.id_in_group]
             reputation_list.append(Reputation(p.id_in_group, deviations))
         return dict(
             reputation_list=reputation_list
@@ -146,6 +146,9 @@ class Negotiation(Page):
                                                          get_open_offers(player, offers)]}
     pass
 
+class WaitForInstructions(WaitPage):
+    body_text = "Please wait until the other participants have read the instructions."
+
 
 class WaitForExchange(WaitPage):
     pass
@@ -154,6 +157,11 @@ class WaitForExchange(WaitPage):
 class Deviation(Page):
     form_model = 'player'
     form_fields = ['deviation']
+    timeout_seconds = 60
+
+    @staticmethod
+    def is_displayed(player):
+        return player.agreed
 
     @staticmethod
     def js_vars(player):
@@ -166,22 +174,34 @@ class Deviation(Page):
 
 
 class WaitAfterExchange(WaitPage):
+    body_text = "Please wait until the other participants have completed their exchanges."
     @staticmethod
     def after_all_players_arrive(group):
         for p in group.get_players():
-            p.deviation_partner = p.group.get_player_by_id(p.exchange_partner).deviation
+            if p.agreed:
+                p.deviation_partner = p.group.get_player_by_id(p.exchange_partner).deviation
     pass
 
 class Result(Page):
+    timeout_seconds = 60
+
     @staticmethod
     def vars_for_template(player: Player):
-        return dict(
-            net_receive=player.receive - player.deviation_partner,
-            points_form_partner=(player.receive - player.deviation_partner)*2,
-            points=(player.receive + player.deviation_partner)*2 + 20 - (player.send + player.deviation),
-            remaining_budget=20 - (player.send + player.deviation)
-        )
+        if player.agreed:
+            return dict(
+                net_receive=player.receive - player.deviation_partner,
+                points_form_partner=(player.receive - player.deviation_partner)*2,
+                points=(player.receive + player.deviation_partner)*2 + 20 - (player.send + player.deviation),
+                remaining_budget=20 - (player.send + player.deviation)
+            )
+        else:
+            return dict(
+                net_receive=0,
+                points_form_partner=0,
+                points=20,
+                remaining_budget=20
+            )
     pass
 
 
-page_sequence = [Negotiation, WaitForExchange, Deviation, WaitAfterExchange, Result]
+page_sequence = [WaitForInstructions, Negotiation, WaitForExchange, Deviation, WaitAfterExchange, Result]
