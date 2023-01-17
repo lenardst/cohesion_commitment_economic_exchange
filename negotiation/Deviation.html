@@ -1,8 +1,8 @@
-{{ block title }}Sending{{ endblock }}
+{{ block title }}Sending Units{{ endblock }}
 {{ block content }}
 
     <p>
-    You have agreed to send {{player.send}} units to participant {{player.exchange_partner}}. You may deviate from this agreement by sending up to three points more or less.
+    You have agreed to send {{player.send}} units to participant {{player.exchange_partner}}. You may send up to three points more or less than agreed on.
     </p>
     <div id="value"></div>
     <input id="slider" type="range" min="{{player.send}}-3" max="3" value="{{player.send}}" step="1" required>

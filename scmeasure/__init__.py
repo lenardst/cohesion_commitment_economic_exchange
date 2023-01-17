@@ -97,7 +97,6 @@ class Player(BasePlayer):
                                 choices=[[0, 'very distant'], [1, 'distant'], [2, 'rather distant'],
                                          [3, 'neither close nor distant'], [4, 'rather close'], [5, 'close'],
                                          [6, 'very close']])
-
     pass
 
 

@@ -1,15 +1,15 @@
 {{ block title }}
-    Result
+    Trade Result
 {{ endblock }}
 {{ block content }}
 
 {{ if player.agreed }}
 
-<p>You receive <b>{{points}} points</b> for this round. {{remaining_budget}} units have remained from your budget resulting in {{remaining_budget}} points. Participant {{player.exchange_partner}} sent {{net_receive}} resulting in {{points_form_partner}} points. He or she deviated from your agreement by {{player.deviation_partner}}. </p>
+<p>You receive <b>{{points}} points</b> for this round. {{remaining_budget}} units have remained from your budget resulting in {{remaining_budget}} points. Participant {{player.exchange_partner}} sent {{net_receive}} resulting in {{points_form_partner}} points. He or she sent {{if player.deviation_partner > 0 }} {{player.deviation_partner}} points more than agreed {{ else }} {{ if 0 > player.deviation_partner }} {{player.deviation_partner}} points less than agreed {{ else }} the amount agreed on {{endif}} {{endif}}. </p>
 
 {{ else }}
 
-<p>You did not exchange goods. All units from your budget have remained resulting in <b>{{points}} points</b>.</p>
+<p>You did not trade this round. All units from your budget have remained resulting in <b>{{points}} points</b>.</p>
 
 {{ endif }}
 

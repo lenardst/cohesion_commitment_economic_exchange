@@ -2,10 +2,10 @@
 {{ block content }}
 
     <p>
-    Please send exchange offers to other participants and respond to the offers of other players to exchange points. You can base your decisions on the information about the other participants' behavior in previous rounds in the table below. Once you accept an offer or one of your offers is accepted by another participant, you cannot change your exchange anymore.
+    Please send offers to other participants and respond to the offers of other players to trade points. You can base your decisions on the information about the other participants' behavior in previous rounds in the table below.
     </p>
 
-    <p> You have received <b>20 units</b> for this round. You earn two points for each unit you receive through exchange and one point for each unit of your initial budget.
+    <p> You have received <b>20 units</b> for this round. You earn two points for each unit you receive through trade and one point for each unit of your initial budget.
     </p>
 
     <div id="reputation">
@@ -13,8 +13,8 @@
   <tr>
     <th>Participant</th>
       <th>Select for Offer</th>
-    <th>Average Deviation</th>
-    <th>List of Deviations</th>
+    <th class="width200">Average difference between agreed and sent amounts</th>
+    <th class>List of differences between agreed and sent amounts</th>
   </tr>
         {{ for reputation in reputation_list }}
     <tr>
@@ -31,7 +31,7 @@
 <div class="container">
     <div id="negotiation" class="left-half">
         <p><b>Send offers</b></p>
-        <p>You can send as many offers as you wish. However, you can only send a follow-up offer to a player, if he or she has declined your previous one. Remeber that the offered and the demanded amount must add up to 20.</p>
+        <p>You can send as many offers as you wish. However, you can only send a follow-up offer to a player, if he or she has declined your previous one.</p>
     <p id="sendOffer">
         <b><span id="display-recipient"></span></b>
         <input type="hidden" name="recipient" id="recipient" min="1" max="6">
@@ -63,13 +63,13 @@
                 <hr>
     <table id="received_table">
         <p><b>Accept or decline offers</b></p>
-        <p>If you decline an offer, the sender can send you another offer. If you accept an offer, all your pending offers will be closed.</p>
+        <p>Once you accept an offer or one of your offers is accepted by another participant, you cannot change your trade anymore. If you agreed on a trade, all your pending offers will be closed.</p>
 
   <tr>
       <th>Sender</th>
       <th>Receive</th>
       <th>Send</th>
-      <th>Accept or Decline</th>
+      <th>Accept or decline</th>
   </tr>
     </table>
         </div>
@@ -235,6 +235,10 @@
 
 .quant-cell-right{
     text-align: right;
+}
+
+.width200 {
+    width: 250px;
 }
 
 </style>

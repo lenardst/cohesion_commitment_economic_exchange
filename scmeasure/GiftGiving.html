@@ -3,12 +3,36 @@
 {{ endblock }}
 {{ block content }}
 
-<p> You may now send gifts to other participants. You receive 50 points to gift. You can gift up to 10 points per player. For each gifted point, the recipient will gain 3 points. Every point you do not gift will be added to your account.</p>
+<p> You have received another <b> 50 points </b>. You may now gift up to 10 points to each other participants. For each gifted point, the recipient will gain 3 points. You will keep the remaining points for yourself. In the end, you will learn how many points you were gifted.<p/>
+
+<p> You may remind yourself of your exchange history in this table:</p>
+
+        <table id="reputation_table">
+  <tr>
+    <th>Round</th>
+      <th>Exchange with participant</th>
+    <th>Agreed amount (send)</th>
+    <th>Sent amount</th>
+      <th>Agreed amount (receive)</th>
+    <th>Received amount</th>
+  </tr>
+        {{ for exchange in participant.exchange_list }}
+    <tr>
+        <td>{{ exchange.round }} </td>
+        <td>{{ exchange.partner }}</td>
+        <td>{{ exchange.amount_agreed_sent }} </td>
+        <td>{{ exchange.amount_sent }} </td>
+        <td>{{ exchange.amount_agreed_receive }} </td>
+        <td>{{ exchange.amount_received }}</td>
+    </tr>
+        {{ endfor }}
+            </table>
+
 
 <hr>
     {{ for p in other_players }}
-    Gift between 0 and 10 points to participant {{p}}:
-    <p id="value{{p}}"></p>
+    <p> Gift between 0 and 10 points to participant {{p}}:
+    <b><span id="value{{p}}">0</span> points</b></p>
     <input id="gift_slider{{p}}" type="range" min="0" max="10" value="0" step="1">
     <hr>
     {{ endfor }}
@@ -36,6 +60,15 @@ input[type=range]::-webkit-slider-runnable-track {
 
 #id_gift1, #id_gift2, #id_gift3, #id_gift4, #id_gift5, #id_gift6{
   display: none;
+}
+
+td, th{
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    padding: 2px 5px;
+    text-align: center;
+
 }
 
 </style>

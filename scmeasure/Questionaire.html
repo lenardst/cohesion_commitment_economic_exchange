@@ -3,15 +3,42 @@
 {{ endblock }}
 {{ block content }}
 
+<p>Please answer a few questions on your relationship to the other participants:</p>
+
+
+<p>You may remind yourself of your exchange history in this table:</p>
+
+        <table id="reputation_table">
+  <tr>
+    <th>Round</th>
+      <th>Exchange with participant</th>
+    <th>Agreed amount (send)</th>
+    <th>Sent amount</th>
+      <th>Agreed amount (receive)</th>
+    <th>Received amount</th>
+  </tr>
+        {{ for exchange in participant.exchange_list }}
+    <tr>
+        <td>{{ exchange.round }} </td>
+        <td>{{ exchange.partner }}</td>
+        <td>{{ exchange.amount_agreed_sent }} </td>
+        <td>{{ exchange.amount_sent }} </td>
+        <td>{{ exchange.amount_agreed_receive }} </td>
+        <td>{{ exchange.amount_received }}</td>
+    </tr>
+        {{ endfor }}
+            </table>
+<hr>
+
 {{ for p in other_players }}
-    How would you describe your relationship to participant {{p}} on each of the following?
+    <p> How would you describe your relationship to <b>participant {{p}} </b>  on each of the following?</p>
 <table class="table">
         <tbody><tr>
             <th><label for="id_close{{p}}">Close/Distant</label></th>
 
                 <td><label for="id_close{{p}}-0">very distant</label> <input class="form-check-input" type="radio" id="id_close{{p}}-0" name="close{{p}}" required="" value="0"></td>
 
-                <td><label for="id_close{{p}}-1">distant</label> <input class="form-check-input" type="radio" id="id_close{{p}}-1" name="close{{p}}" required="" value="1"></td>
+                <td><label for="id_close{{p}}-1">distant</label><br><input class="form-check-input" type="radio" id="id_close{{p}}-1" name="close{{p}}" required="" value="1"></td>
 
                 <td><label for="id_close{{p}}-2">rather distant</label> <input class="form-check-input" type="radio" id="id_close{{p}}-2" name="close{{p}}" required="" value="2"></td>
 
@@ -19,52 +46,75 @@
 
                 <td><label for="id_close{{p}}-4">rather close</label> <input class="form-check-input" type="radio" id="id_close{{p}}-4" name="close{{p}}" required="" value="4"></td>
 
-                <td><label for="id_close{{p}}-5">close</label> <input class="form-check-input" type="radio" id="id_close{{p}}-5" name="close{{p}}" required="" value="5"></td>
+                <td><label for="id_close{{p}}-5">close</label><br><input class="form-check-input" type="radio" id="id_close{{p}}-5" name="close{{p}}" required="" value="5"></td>
 
                 <td><label for="id_close{{p}}-6">very close</label> <input class="form-check-input" type="radio" id="id_close{{p}}-6" name="close{{p}}" required="" value="6"></td>
 
         </tr>
         <tr>
-            <th><label for="id_cohesive{{p}}">Divisive/cohesive</label></th>
+            <th><label for="id_cohesive{{p}}">Cohesive/divisive</label></th>
 
-                <td><label for="id_cohesive{{p}}-0">very distant</label> <input class="form-check-input" type="radio" id="id_cohesive{{p}}-0" name="cohesive{{p}}" required="" value="0"></td>
+                <td><label for="id_cohesive{{p}}-0">very cohesive</label> <input class="form-check-input" type="radio" id="id_cohesive{{p}}-0" name="cohesive{{p}}" required="" value="0"></td>
 
-                <td><label for="id_cohesive{{p}}-1">distant</label> <input class="form-check-input" type="radio" id="id_cohesive{{p}}-1" name="cohesive{{p}}" required="" value="1"></td>
+                <td><label for="id_cohesive{{p}}-1">cohesive</label> <input class="form-check-input" type="radio" id="id_cohesive{{p}}-1" name="cohesive{{p}}" required="" value="1"></td>
 
-                <td><label for="id_cohesive{{p}}-2">rather distant</label> <input class="form-check-input" type="radio" id="id_cohesive{{p}}-2" name="cohesive{{p}}" required="" value="2"></td>
+                <td><label for="id_cohesive{{p}}-2">rather cohesive</label> <input class="form-check-input" type="radio" id="id_cohesive{{p}}-2" name="cohesive{{p}}" required="" value="2"></td>
 
-                <td><label for="id_cohesive{{p}}-3">neither close nor distant</label> <input class="form-check-input" type="radio" id="id_cohesive{{p}}-3" name="cohesive{{p}}" required="" value="3"></td>
+                <td><label for="id_cohesive{{p}}-3">neither cohesive nor divisive</label> <input class="form-check-input" type="radio" id="id_cohesive{{p}}-3" name="cohesive{{p}}" required="" value="3"></td>
 
-                <td><label for="id_cohesive{{p}}-4">rather close</label> <input class="form-check-input" type="radio" id="id_cohesive{{p}}-4" name="cohesive{{p}}" required="" value="4"></td>
+                <td><label for="id_cohesive{{p}}-4">rather divisive</label> <input class="form-check-input" type="radio" id="id_cohesive{{p}}-4" name="cohesive{{p}}" required="" value="4"></td>
 
-                <td><label for="id_cohesive{{p}}-5">close</label> <input class="form-check-input" type="radio" id="id_cohesive{{p}}-5" name="cohesive{{p}}" required="" value="5"></td>
+                <td><label for="id_cohesive{{p}}-5">divisive</label><br><input class="form-check-input" type="radio" id="id_cohesive{{p}}-5" name="cohesive{{p}}" required="" value="5"></td>
 
-                <td><label for="id_cohesive{{p}}-6">very close</label> <input class="form-check-input" type="radio" id="id_cohesive{{p}}-6" name="cohesive{{p}}" required="" value="6"></td>
+                <td><label for="id_cohesive{{p}}-6">very divisive</label> <input class="form-check-input" type="radio" id="id_cohesive{{p}}-6" name="cohesive{{p}}" required="" value="6"></td>
 
-        </tr>
+        </br>
         <tr>
             <th><label for="id_team{{p}}">Team-oriented/self-oriented</label></th>
 
-                <td><label for="id_team{{p}}-0">very distant</label> <input class="form-check-input" type="radio" id="id_team{{p}}-0" name="team{{p}}" required="" value="0"></td>
+                <td><label for="id_team{{p}}-0">very team-oriented</label> <input class="form-check-input" type="radio" id="id_team{{p}}-0" name="team{{p}}" required="" value="0"></td>
 
-                <td><label for="id_team{{p}}-1">distant</label> <input class="form-check-input" type="radio" id="id_team{{p}}-1" name="team{{p}}" required="" value="1"></td>
+                <td><label for="id_team{{p}}-1">team-oriented</label> <input class="form-check-input" type="radio" id="id_team{{p}}-1" name="team{{p}}" required="" value="1"></td>
 
-                <td><label for="id_team{{p}}-2">rather distant</label> <input class="form-check-input" type="radio" id="id_team{{p}}-2" name="team{{p}}" required="" value="2"></td>
+                <td><label for="id_team{{p}}-2">rather team-oriented</label> <input class="form-check-input" type="radio" id="id_team{{p}}-2" name="team{{p}}" required="" value="2"></td>
 
-                <td><label for="id_team{{p}}-3">neither close nor distant</label> <input class="form-check-input" type="radio" id="id_team{{p}}-3" name="team{{p}}" required="" value="3"></td>
+                <td><label for="id_team{{p}}-3">neither team-oriented nor self-oriented</label> <input class="form-check-input" type="radio" id="id_team{{p}}-3" name="team{{p}}" required="" value="3"></td>
 
-                <td><label for="id_team{{p}}-4">rather close</label> <input class="form-check-input" type="radio" id="id_team{{p}}-4" name="team{{p}}" required="" value="4"></td>
+                <td><label for="id_team{{p}}-4">rather self-oriented</label> <input class="form-check-input" type="radio" id="id_team{{p}}-4" name="team{{p}}" required="" value="4"></td>
 
-                <td><label for="id_team{{p}}-5">close</label> <input class="form-check-input" type="radio" id="id_team{{p}}-5" name="team{{p}}" required="" value="5"></td>
+                <td><label for="id_team{{p}}-5">self-oriented</label> <input class="form-check-input" type="radio" id="id_team{{p}}-5" name="team{{p}}" required="" value="5"></td>
 
-                <td><label for="id_team{{p}}-6">very close</label> <input class="form-check-input" type="radio" id="id_team{{p}}-6" name="team{{p}}" required="" value="6"></td>
-
+                <td><label for="id_team{{p}}-6">very self-oriented</label> <input class="form-check-input" type="radio" id="id_team{{p}}-6" name="team{{p}}" required="" value="6"></td>
         </tr>
-
 </tbody></table>
-
     {{ endfor }}
 
     {{ next_button }}
 
+{{ endblock }}
+
+{% block style %}
+<style>
+input[type=range]::-webkit-slider-thumb {
+  background-color: #4caf50;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  background-color: #ddd;
+}
+
+#id_gift1, #id_gift2, #id_gift3, #id_gift4, #id_gift5, #id_gift6{
+  display: none;
+}
+
+td, th{
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    padding: 2px 5px;
+    text-align: center;
+
+}
+
+</style>
 {{ endblock }}

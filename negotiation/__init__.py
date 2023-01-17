@@ -1,5 +1,5 @@
 from otree.api import *
-from negotiation.reputation import Reputation
+from negotiation.reputation import Reputation, ExchangeRound
 from negotiation.offer_queries import get_open_offers, get_sent_offers, get_available_players, all_agreed, check_offer_legal, check_acceptance_legal
 
 
@@ -157,7 +157,7 @@ class WaitForExchange(WaitPage):
 class Deviation(Page):
     form_model = 'player'
     form_fields = ['deviation']
-    timeout_seconds = 60
+    timeout_seconds = 45
 
     @staticmethod
     def is_displayed(player):
@@ -183,7 +183,15 @@ class WaitAfterExchange(WaitPage):
     pass
 
 class Result(Page):
-    timeout_seconds = 60
+    timeout_seconds = 30
+
+    def before_next_page(player: Player, timeout_happened):
+        if player.round_number == 1:
+            player.participant.exchange_list = []
+        if player.agreed:
+            player.participant.exchange_list.append(ExchangeRound(player.round_number, player.exchange_partner, player.receive, player.deviation_partner, player.send, player.deviation))
+        else:
+            player.participant.exchange_list.append(ExchangeRound(player.round_number, "No exchange", "", "", "", ""))
 
     @staticmethod
     def vars_for_template(player: Player):
