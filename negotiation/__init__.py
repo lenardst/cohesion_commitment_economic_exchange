@@ -9,7 +9,7 @@ doc = """Negotiation between players"""
 class C(BaseConstants):
     NAME_IN_URL = 'negotiation'
     PLAYERS_PER_GROUP = 6
-    NUM_ROUNDS = 4
+    NUM_ROUNDS = 2
     REPUTATION_SYSTEM = True
 pass
 
