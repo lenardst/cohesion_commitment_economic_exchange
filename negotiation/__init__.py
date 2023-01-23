@@ -13,6 +13,7 @@ class C(BaseConstants):
     REPUTATION_SYSTEM = True
     PAY_TRADED_UNIT = 0.02
     PAY_BUDGET_UNIT = 0.01
+    UNIT_BUDGET = 20
 pass
 
 
@@ -168,7 +169,7 @@ class WaitForExchange(WaitPage):
 class Deviation(Page):
     form_model = 'player'
     form_fields = ['deviation']
-    timeout_seconds = 45
+    #timeout_seconds = 45
 
     @staticmethod
     def is_displayed(player):
@@ -178,8 +179,10 @@ class Deviation(Page):
     def js_vars(player):
         return dict(
             slider_min=max(player.send - 3, 0),
-            slider_max=min(player.send + 3, 20),
-            slider_middle=player.send
+            slider_max=min(player.send + 3, C.UNIT_BUDGET),
+            slider_middle=player.send,
+            pay_traded_unit=C.PAY_TRADED_UNIT,
+            pay_budget_unit=C.PAY_BUDGET_UNIT
         )
     pass
 
@@ -191,10 +194,14 @@ class WaitAfterExchange(WaitPage):
         for p in group.get_players():
             if p.agreed:
                 p.deviation_partner = p.group.get_player_by_id(p.exchange_partner).deviation
+                p.payoff = (p.receive + p.deviation_partner)*C.PAY_TRADED_UNIT+(C.UNIT_BUDGET-p.send-p.deviation)*C.PAY_BUDGET_UNIT
+            else:
+                p.payoff = C.UNIT_BUDGET*C.PAY_BUDGET_UNIT
+
     pass
 
 class Result(Page):
-    timeout_seconds = 30
+    #timeout_seconds = 30
 
     def before_next_page(player: Player, timeout_happened):
         if player.round_number == 1:
@@ -208,17 +215,16 @@ class Result(Page):
     def vars_for_template(player: Player):
         if player.agreed:
             return dict(
-                net_receive=player.receive - player.deviation_partner,
-                points_form_partner=(player.receive - player.deviation_partner)*2,
-                points=(player.receive + player.deviation_partner)*2 + 20 - (player.send + player.deviation),
-                remaining_budget=20 - (player.send + player.deviation)
+                net_receive=player.receive + player.deviation_partner,
+                points_form_partner=(player.receive + player.deviation_partner)*C.PAY_TRADED_UNIT,
+                remaining_budget=C.UNIT_BUDGET - player.send - player.deviation,
+                remaining_budget_pay=(C.UNIT_BUDGET - player.send - player.deviation)*C.PAY_BUDGET_UNIT,
+                abs_deviation_partner=abs(player.deviation_partner)
             )
         else:
             return dict(
                 net_receive=0,
                 points_form_partner=0,
-                points=20,
-                remaining_budget=20
             )
     pass
 

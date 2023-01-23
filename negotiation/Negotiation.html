@@ -2,24 +2,31 @@
 {{ block content }}
 
     <p>
-    Please send offers to other participants and respond to the offers of others to trade points. You can base your decisions on the information about the other participants' behavior in previous rounds in the table below.
+    Please send offers to other participants and respond to the offers of others to trade.
     </p>
 
-    <p> You have received <b>20 units</b> for this round. You earn two points for each unit you receive through trade and one point for each unit of your initial budget.
+    <p> You have received <b>20 units</b> for this round. Your potential pay-off is displayed next to the offers. If you do not trade, your pay-off will be 0.20 €.
     </p>
-
-    <p>Once you accept an offer or one of your offers is accepted by another participant, you cannot change your trade anymore. If you agreed on a trade, all your pending offers will be closed.</p>
 
     <div id="reputation">
         <table id="reputation_table">
   <tr>
     <th>Participant</th>
-      <th>Select for Offer</th>
-    <th class="width200">Average difference between agreed and sent amounts</th>
-    <th>List of differences between agreed and sent amounts</th>
-      <th>Pending received offer</th>
-      <th>Accept/decline sent offer</th>
-      <th>Pending sent offer</th>
+      <th>Select for Offer <span class="tooltip"><b>i</b>
+  <span class="tooltiptext">Use the buttons to select a participant you want to send an offer to. Next, chose and send the offer below the table.</span>
+</span></th>
+    <th>Average difference between agreed and sent amounts <span class="tooltip"><b>i</b>
+  <span class="tooltiptext">This column shows the average difference between agreed and sent amounts for the respective participant. A positive number means that a participant has sent more than agreed in the past. A negative number means that a participant has sent less than agreed in the past.</span>
+</span></th>
+    <th>List of differences between agreed and sent amounts <span class="tooltip"><b>i</b>
+  <span class="tooltiptext">This column shows the list of differences between agreed and sent amounts for the respective participant. A positive number means that a participant sent more than agreed. A negative number means that this participant sent less than agreed. The difference from the first trade is listed first and the most recent one is listed last.</span>
+</span></th>
+      <th>Pending received offer <span class="tooltip"><b>i</b>
+  <span class="tooltiptext">This column shows the offers you have received from other participants. You can accept or decline the offer in the right column.</span> </span></th>
+      <th>Accept/decline sent offers <span class="tooltip"><b>i</b>
+  <span class="tooltiptext">In this column, you can accept or decline offers from other participants. Once you accept an offer, you cannot change your trade anymore. If you agreed to a trade, all your pending offers will be closed.</span> </span></th>
+      <th>Pending sent offers <span class="tooltip"><b>i</b>
+  <span class="tooltiptext">This column shows the offers you have sent to other participants. If they decline the offer, it will disappear from this column and you can send another one. If they accept the offer, you cannot change your trade anymore and all your pending offers will be closed.</span> </span></th>
   </tr>
         {{ for reputation in reputation_list }}
     <tr>
@@ -37,22 +44,22 @@
 
     <hr>
     <div id="negotiation">
-        <p><b>Send offers</b></p>
-        <p>You can send as many offers as you wish. However, you can only send a follow-up offer to a player, if he or she has declined your previous one.</p>
+        <p><b>Send offers</b> <span class="tooltip"><b>i</b>
+      <span class="tooltiptext">Send an offer by selecting a participant, chosing an amount and clicking the button below. The offered and the demanded amount always add up to 20.</span>
+</span></p>
     <p id="sendOffer">
         <b><span id="display-recipient"></span></b>
         <input type="hidden" name="recipient" id="recipient" min="1" max="6">
         <table id="slider_table">
             <tr>
-                        <td class="quant-cell-left">Offer: <br><span id="left">10</span></td>
-                        <td class="quant-cell-right">Demand: <br><span id="right">10</span></td>
+                        <td style='border:none;' class="quant-cell-left">Receive: <br><span id="left">10 (Your pay-off: 0.30 €)</span></td>
+                        <td style='border:none;' class="quant-cell-right">Send: <br><span id="right">10 (Other's pay-off: 0.30 €)</span></td>
             </tr>
             <tr>
-                        <td colspan="2" id="slider-cell"><input type="range" id="offer" class="offer-slider" name="slider" min="0" max="20" value="10" step="1"></td>
+                        <td style='border:none;' colspan="2" id="slider-cell"><input type="range" id="offer" class="offer-slider" name="slider" min="0" max="20" value="10" step="1"></td>
             </tr>
                 </table>
         <input type="button" value="Send offer" id="button_send" disabled>
-    </form>
             </div>
 
     <p id="display-exchange"> </p>
@@ -139,10 +146,10 @@
             document.getElementById('select-button' + number).removeAttribute('disabled')
         });
         if (document.getElementById('recipient').value == ""){
-            document.getElementById('display-recipient').innerHTML = "Please chose a participant from the table above.";
+            document.getElementById('display-recipient').innerHTML = "Please select a participant from the table above.";
         } else if (!player_list.includes(document.getElementById('recipient').value)){
             document.getElementById('recipient').value = "";
-            document.getElementById('display-recipient').innerHTML = "Please chose another participant.";
+            document.getElementById('display-recipient').innerHTML = "Please select another participant.";
             document.getElementById('button_send').disabled = true;
         }
     }
@@ -155,12 +162,12 @@
 
     document.getElementById('offer').addEventListener('input', changeDemand)
     function changeDemand(){
-        var offer = document.getElementById('offer').value;
-        var demand = 20 - offer;
+        var demand = document.getElementById('offer').value;
+        var offer = 20 - demand;
         var pay_off = js_vars.pay_traded_unit * demand + js_vars.pay_budget_unit * demand;
         var pay_off_partner = js_vars.pay_traded_unit * offer + js_vars.pay_budget_unit * offer;
-        document.getElementById('left').innerHTML = offer + ' (Other\'s pay-off: ' + pay_off_partner.toFixed(2) + ' €)';
-        document.getElementById('right').innerHTML = demand + ' (Your pay-off: ' + pay_off.toFixed(2) + ' €)';
+        document.getElementById('right').innerHTML = offer + ' (Other\'s pay-off: ' + pay_off_partner.toFixed(2) + ' €)';
+        document.getElementById('left').innerHTML = demand + ' (Your pay-off: ' + pay_off.toFixed(2) + ' €)';
     }
 
     function selectRecipient(number) {
@@ -181,7 +188,7 @@
       text-align: center;
   }
 
-   td, th {
+   td, th, tr {
     border: 1px solid black;
     padding: 5px;
   }
@@ -220,6 +227,40 @@
 .otree-timer.alert.alert-warning > p {
     margin-bottom: 0px !important;
 }
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+    opacity: 1;
+    color: white;
+    border-color: green;
+    background-color: green;
+    padding: 1px 5px;
+    border-radius: 10px;
+}
+
+.tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 5px;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: -5px;
+  left: 105%;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+
 
 </style>
 {{ endblock }}
