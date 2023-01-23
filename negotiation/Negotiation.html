@@ -2,11 +2,13 @@
 {{ block content }}
 
     <p>
-    Please send offers to other participants and respond to the offers of other players to trade points. You can base your decisions on the information about the other participants' behavior in previous rounds in the table below.
+    Please send offers to other participants and respond to the offers of others to trade points. You can base your decisions on the information about the other participants' behavior in previous rounds in the table below.
     </p>
 
     <p> You have received <b>20 units</b> for this round. You earn two points for each unit you receive through trade and one point for each unit of your initial budget.
     </p>
+
+    <p>Once you accept an offer or one of your offers is accepted by another participant, you cannot change your trade anymore. If you agreed on a trade, all your pending offers will be closed.</p>
 
     <div id="reputation">
         <table id="reputation_table">
@@ -14,7 +16,10 @@
     <th>Participant</th>
       <th>Select for Offer</th>
     <th class="width200">Average difference between agreed and sent amounts</th>
-    <th class>List of differences between agreed and sent amounts</th>
+    <th>List of differences between agreed and sent amounts</th>
+      <th>Pending received offer</th>
+      <th>Accept/decline sent offer</th>
+      <th>Pending sent offer</th>
   </tr>
         {{ for reputation in reputation_list }}
     <tr>
@@ -22,14 +27,16 @@
         <td><button type="button" id="select-button{{ reputation.player_id }}" class="select-button" onclick="selectRecipient({{ reputation.player_id }})" disabled>Select participant {{ reputation.player_id }}</button></td>
         <td>{{ reputation.reputation_mean }} </td>
         <td>{{ reputation.reputation_list }}</td>
+        <td id="received-cell-{{ reputation.player_id }}" class="received-cell"></td>
+        <td id="feedback-cell-{{ reputation.player_id }}" class="feedback-cell"></td>
+        <td id="sent-cell-{{ reputation.player_id }}" class="sent-cell"></td>
     </tr>
         {{ endfor }}
             </table>
     </div>
 
     <hr>
-<div class="container">
-    <div id="negotiation" class="left-half">
+    <div id="negotiation">
         <p><b>Send offers</b></p>
         <p>You can send as many offers as you wish. However, you can only send a follow-up offer to a player, if he or she has declined your previous one.</p>
     <p id="sendOffer">
@@ -46,33 +53,7 @@
                 </table>
         <input type="button" value="Send offer" id="button_send" disabled>
     </form>
-    </div>
-
-        <div id="outgoing" class="right-half">
-            <p><b>Pending offers</b></p>
-                <table id="sent_table">
-                      <tr>
-                        <th>Recipient</th>
-                        <th>Offered</th>
-                        <th>Demanded</th>
-                    </tr>
-                </table>
-        </div>
-</div>
-    <div id="incoming" class="full-block">
-                <hr>
-    <table id="received_table">
-        <p><b>Accept or decline offers</b></p>
-        <p>Once you accept an offer or one of your offers is accepted by another participant, you cannot change your trade anymore. If you agreed on a trade, all your pending offers will be closed.</p>
-
-  <tr>
-      <th>Sender</th>
-      <th>Receive</th>
-      <th>Send</th>
-      <th>Accept or decline</th>
-  </tr>
-    </table>
-        </div>
+            </div>
 
     <p id="display-exchange"> </p>
 
@@ -109,31 +90,32 @@
     }
 
     function displayPendingOffers(offer_list){
-        $("#sent_table").find("tr:not(:first)").remove();
+        var list1 = document.getElementsByClassName("sent-cell");
+        for (i = 0; list1.length > i; i++) {
+            list1[i].innerHTML = ""
+        }
         for (i = 0; offer_list.length > i; i++){
-            var row = sent_table.insertRow(-1);
-            row.id = 'sent_row' + offer_list[i][0];
-            var cell_player = row.insertCell(0);
-            var cell_offer = row.insertCell(1);
-            var cell_demand = row.insertCell(2);
-            cell_player.innerHTML = 'Participant ' + offer_list[i][1];
-            cell_offer.innerHTML = offer_list[i][2];
-            cell_demand.innerHTML = offer_list[i][3];
+            cell_offer = document.getElementById('sent-cell-' + offer_list[i][1]);
+            var pay_off = js_vars.pay_traded_unit * offer_list[i][3] + js_vars.pay_budget_unit * offer_list[i][3];
+            var pay_off_partner = js_vars.pay_traded_unit * offer_list[i][2] + js_vars.pay_budget_unit * offer_list[i][2];
+            cell_offer.innerHTML = 'Receive ' + offer_list[i][3] + ' (' + pay_off.toFixed(2) + '€)' + ', send ' + offer_list[i][2] + ' (' + pay_off_partner.toFixed(2) + '€)';
         }
     }
 
     function displayOpenOffers(offer_list) {
-        $("#received_table").find("tr:not(:first)").remove();
+        var list1 = document.getElementsByClassName("received-cell");
+        var list2 = document.getElementsByClassName('feedback-cell');
+        for (i = 0; list1.length > i; i++) {
+            list1[i].innerHTML = ""
+            list2[i].innerHTML = ""
+        }
+
         for (i = 0; offer_list.length > i; i++) {
-            var row = received_table.insertRow(-1);
-            row.id = 'sent_row' + offer_list[i][0];
-            var cell_player = row.insertCell(0);
-            var cell_offer = row.insertCell(1);
-            var cell_demand = row.insertCell(2);
-            cell_player.innerHTML = 'Participant ' + offer_list[i][1];
-            cell_offer.innerHTML = offer_list[i][2];
-            cell_demand.innerHTML = offer_list[i][3];
-            var cell_accept_decline = row.insertCell(3);
+            cell_offer = document.getElementById('received-cell-' + offer_list[i][1]);
+            cell_accept_decline = document.getElementById('feedback-cell-' + offer_list[i][1]);
+            var pay_off = js_vars.pay_traded_unit * offer_list[i][2] + js_vars.pay_budget_unit * offer_list[i][2];
+            var pay_off_partner = js_vars.pay_traded_unit * offer_list[i][3] + js_vars.pay_budget_unit * offer_list[i][3];
+            cell_offer.innerHTML = 'Receive ' + offer_list[i][2] + ' (' + pay_off.toFixed(2) + '€)' + ', send ' + offer_list[i][3] + ' (' + pay_off_partner.toFixed(2) + '€)';
             cell_accept_decline.innerHTML = '<button type="button" id="accept_' + offer_list[i][0] + '" onclick="acceptOffer(' + offer_list[i][0] + ')">Accept</button><br><button type="button" id="decline_' + offer_list[i][0] + '" onclick="declineOffer(' + offer_list[i][0] + ')">Decline</button>';
         }
     }
@@ -166,16 +148,19 @@
     }
 
     function displayExchange(partner, send, receive){
+        document.getElementById('reputation').style.display = 'none';
         document.getElementById('negotiation').style.display = 'none';
-        document.getElementById('incoming').style.display = 'none';
-        document.getElementById('outgoing').style.display = 'none';
         document.getElementById('display-exchange').innerHTML = 'You have agreed with participant ' + partner + ' to send ' + send + ' units and to receive ' + receive
 + ' units.'}
 
     document.getElementById('offer').addEventListener('input', changeDemand)
     function changeDemand(){
-        document.getElementById('left').innerHTML = document.getElementById('offer').value
-        document.getElementById('right').innerHTML = 20 - document.getElementById('offer').value
+        var offer = document.getElementById('offer').value;
+        var demand = 20 - offer;
+        var pay_off = js_vars.pay_traded_unit * demand + js_vars.pay_budget_unit * demand;
+        var pay_off_partner = js_vars.pay_traded_unit * offer + js_vars.pay_budget_unit * offer;
+        document.getElementById('left').innerHTML = offer + ' (Other\'s pay-off: ' + pay_off_partner.toFixed(2) + ' €)';
+        document.getElementById('right').innerHTML = demand + ' (Your pay-off: ' + pay_off.toFixed(2) + ' €)';
     }
 
     function selectRecipient(number) {
@@ -205,20 +190,6 @@
   grid-template-columns: 1fr 1fr; /* Two columns with equal width */
 }
 
-
-.left-half {
-    float: left;
-    width: 600px;
-    margin-right: 10px;
-}
-
-
-.right-half {
-    float: left;
-    width: 300px;
-    margin-left: 10px;
-}
-
 .full-block {
     float: none;
     display: inline-block;
@@ -239,6 +210,15 @@
 
 .width200 {
     width: 250px;
+}
+
+  .otree-timer.alert.alert-warning {
+    padding: 5px 5px !important;
+      padding-left: 5px;
+}
+
+.otree-timer.alert.alert-warning > p {
+    margin-bottom: 0px !important;
 }
 
 </style>

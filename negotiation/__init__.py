@@ -11,6 +11,8 @@ class C(BaseConstants):
     PLAYERS_PER_GROUP = 6
     NUM_ROUNDS = 5
     REPUTATION_SYSTEM = True
+    PAY_TRADED_UNIT = 0.02
+    PAY_BUDGET_UNIT = 0.01
 pass
 
 
@@ -54,7 +56,7 @@ class Offer(ExtraModel):
 class Negotiation(Page):
     # form_model = 'player'
     # form_fields = ['exchange_partner', 'send', 'receive']
-    timeout_seconds = 90
+    #timeout_seconds = 150
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -63,7 +65,16 @@ class Negotiation(Page):
             deviations = [i.field_maybe_none('deviation') for i in p.in_previous_rounds() if C.REPUTATION_SYSTEM or i.field_maybe_none('exchange_partner') is player.id_in_group]
             reputation_list.append(Reputation(p.id_in_group, deviations))
         return dict(
-            reputation_list=reputation_list
+            reputation_list=reputation_list,
+            pay_traded_unit=C.PAY_TRADED_UNIT,
+            pay_budget_unit=C.PAY_BUDGET_UNIT
+        )
+
+    @staticmethod
+    def js_vars(player: Player):
+        return dict(
+            pay_traded_unit=C.PAY_TRADED_UNIT,
+            pay_budget_unit=C.PAY_BUDGET_UNIT
         )
 
     @staticmethod
