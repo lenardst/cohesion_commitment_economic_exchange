@@ -14,6 +14,7 @@ class C(BaseConstants):
     PAY_TRADED_UNIT = 0.02
     PAY_BUDGET_UNIT = 0.01
     UNIT_BUDGET = 20
+    DEVIATION = 5
 pass
 
 
@@ -209,7 +210,7 @@ class Result(Page):
         if player.agreed:
             player.participant.exchange_list.append(ExchangeRound(player.round_number, player.exchange_partner, player.receive, player.deviation_partner, player.send, player.deviation))
         else:
-            player.participant.exchange_list.append(ExchangeRound(player.round_number, "No exchange", "", "", "", ""))
+            player.participant.exchange_list.append(ExchangeRound(player.round_number, "No trade", "", "", "", ""))
 
     @staticmethod
     def vars_for_template(player: Player):

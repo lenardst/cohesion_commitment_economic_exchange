@@ -3,9 +3,9 @@
 {{ endblock }}
 {{ block content }}
 
-<p> You have received another <b> 50 points</b>. You may now gift up to 10 points to each other participants. For each gifted point, the recipient will gain 3 points. You will keep the remaining points for yourself. In the end, you will learn how many points you were gifted.<p/>
+<p> You have received another <b>€0.50</b>. You may now gift up to €0.10 to each other participant. The money will be muliplied by three when gifted. That is, if you gift €0.10, the recipient receives €0.30. You will keep the remaining money for yourself. In the end, you will learn how much you were gifted.<p/>
 
-<p> You may remind yourself of your exchange history in this table:</p>
+<p> You may remind yourself of your trade history in this table:</p>
 
         <table id="reputation_table">
   <tr>
@@ -31,9 +31,9 @@
 
 <hr>
     {{ for p in other_players }}
-    <p> Gift between 0 and 10 points to participant {{p}}:
-    <b><span id="value{{p}}">0</span> points</b></p>
-    <input id="gift_slider{{p}}" type="range" min="0" max="10" value="0" step="1">
+    <p> Gift between €0 and €.10 to participant {{p}}:
+    <b>€<span id="value{{p}}">0</span></b></p>
+    <input id="gift_slider{{p}}" class="deviation-slider" type="range" min="0" max="0.1" value="0" step="0.01">
     <hr>
     {{ endfor }}
     {{ form.gift1 }}
@@ -70,6 +70,18 @@ td, th{
     text-align: center;
 
 }
+
+.deviation-slider {
+  width: 400px;
+}
+
+.input-group>:not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+    display: none;
+    margin-left: -1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+
+
 
 </style>
 {{ endblock }}

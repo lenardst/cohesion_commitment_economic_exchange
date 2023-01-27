@@ -16,12 +16,12 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    gift1 = models.IntegerField(initial=0, min=0, max=10)
-    gift2 = models.IntegerField(initial=0, min=0, max=10)
-    gift3 = models.IntegerField(initial=0, min=0, max=10)
-    gift4 = models.IntegerField(initial=0, min=0, max=10)
-    gift5 = models.IntegerField(initial=0, min=0, max=10)
-    gift6 = models.IntegerField(initial=0, min=0, max=10)
+    gift1 = models.CurrencyField(initial=0, min=0, max=10)
+    gift2 = models.CurrencyField(initial=0, min=0, max=10)
+    gift3 = models.CurrencyField(initial=0, min=0, max=10)
+    gift4 = models.CurrencyField(initial=0, min=0, max=10)
+    gift5 = models.CurrencyField(initial=0, min=0, max=10)
+    gift6 = models.CurrencyField(initial=0, min=0, max=10)
 
     close1 = models.IntegerField(widget=widgets.RadioSelectHorizontal,
                                  choices=[[0, 'very distant'], [1, 'distant'], [2, 'rather distant'],

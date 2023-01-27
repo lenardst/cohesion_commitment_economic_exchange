@@ -141,6 +141,7 @@
         var buttons = document.getElementsByClassName('select-button')
         for(var i = 0; i < buttons.length; i++) {
             buttons[i].disabled = true;
+            buttons[i].classList.remove('active-select-button');
         }
         $.each(player_list, function(index, number){
             document.getElementById('select-button' + number).removeAttribute('disabled')
@@ -171,9 +172,14 @@
     }
 
     function selectRecipient(number) {
-  document.getElementById("recipient").value = number;
-  document.getElementById("display-recipient").innerHTML = "You selected participant " + number + ".";
-  document.getElementById('button_send').removeAttribute('disabled');
+        var active_button = document.getElementsByClassName('active-select-button')[0];
+        if(active_button != null){
+            active_button.classList.remove('active-select-button')
+        }
+        document.getElementById('select-button' + number).classList.add('active-select-button');
+        document.getElementById("recipient").value = number;
+        document.getElementById("display-recipient").innerHTML = "You selected participant " + number + ".";
+        document.getElementById('button_send').removeAttribute('disabled');
 }
 
 
@@ -260,6 +266,10 @@
   visibility: visible;
 }
 
+.active-select-button {
+        background-color: #72b2ff;
+
+}
 
 
 </style>
