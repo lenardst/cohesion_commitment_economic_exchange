@@ -2,7 +2,7 @@
 {{ block content }}
 
     <p>
-    You have agreed to send {{player.send}} units to participant {{player.exchange_partner}}. You may send up to three units more or less than agreed on.
+    You have agreed to send {{player.send}} units to participant {{exchange_partner}}. You may send up to {{C.DEVIATION}} units more or less than agreed on.
     </p>
     {{ form.deviation }}
 

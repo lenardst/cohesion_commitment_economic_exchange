@@ -3,37 +3,44 @@
 {{ endblock }}
 {{ block content }}
 
-<p> You have received another <b> 50 points</b>. You may now gift up to 10 points to each other participants. For each gifted point, the recipient will gain 3 points. You will keep the remaining points for yourself. In the end, you will learn how many points you were gifted.<p/>
+<p> You have received another <b>{{C.GIFT}}</b>. You may now gift up to {{C.GIFT}} to each other participant. Only one of your gifts will be randomly chosen and given to the respective participant. The amount you gifted will be multiplied by three. That is, if you gift €0.10, for example, the recipient receives €0.30. You will keep the remaining money. In the end, you will learn how much you were gifted.<p/>
 
-<p> You may remind yourself of your exchange history in this table:</p>
+<hr>
+    {{ for p in other_players }}
+    <p> Gift between €0 and €1 to participant {{p.label}}:
+    <b>€<span id="value{{p.number}}">0</span></b></p>
+    <input id="gift_slider{{p.number}}" class="deviation-slider" type="range" min="0" max="1" value="0" step="0.01">
+    {{ if p.number not in exchange_partners }}
 
-        <table id="reputation_table">
+<p> You did not trade with participant {{p.label}}.</p>
+
+{{else}}
+
+<p> You may remind yourself of your trade history with participant {{p.label}} this table:</p>
+
+        <table class="reputation_table">
   <tr>
     <th>Round</th>
-      <th>Exchange with participant</th>
-    <th>Agreed amount (send)</th>
-    <th>Sent amount</th>
-      <th>Agreed amount (receive)</th>
-    <th>Received amount</th>
+      <th>Trade with participant</th>
+    <th>Agreed units (send)</th>
+    <th>Sent units</th>
+      <th>Agreed units (receive)</th>
+    <th>Received units</th>
   </tr>
         {{ for exchange in participant.exchange_list }}
+            {{if exchange.partner.number == p.number }}
     <tr>
         <td>{{ exchange.round }} </td>
-        <td>{{ exchange.partner }}</td>
+        <td>{{ exchange.partner.label }}</td>
         <td>{{ exchange.amount_agreed_sent }} </td>
         <td>{{ exchange.amount_sent }} </td>
         <td>{{ exchange.amount_agreed_receive }} </td>
         <td>{{ exchange.amount_received }}</td>
     </tr>
+            {{endif}}
         {{ endfor }}
             </table>
-
-
-<hr>
-    {{ for p in other_players }}
-    <p> Gift between 0 and 10 points to participant {{p}}:
-    <b><span id="value{{p}}">0</span> points</b></p>
-    <input id="gift_slider{{p}}" type="range" min="0" max="10" value="0" step="1">
+            {{endif}}
     <hr>
     {{ endfor }}
     {{ form.gift1 }}
@@ -70,6 +77,18 @@ td, th{
     text-align: center;
 
 }
+
+.deviation-slider {
+  width: 400px;
+}
+
+.input-group>:not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+    display: none;
+    margin-left: -1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+
+
 
 </style>
 {{ endblock }}

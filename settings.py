@@ -5,7 +5,6 @@ SESSION_CONFIGS = [
          name='EcoEx_RS',
          display_name="Economic Exchange and Reputation Systems",
          app_sequence=['instruction', 'negotiation', 'scmeasure'],
-         #app_sequence=['scmeasure'],
          num_demo_participants=6,
      )
 ]
@@ -16,10 +15,10 @@ SESSION_CONFIGS = [
 # e.g. self.session.config['participation_fee']
 
 SESSION_CONFIG_DEFAULTS = dict(
-    real_world_currency_per_point=1.00, participation_fee=0.00, doc=""
+    real_world_currency_per_point=1.00, participation_fee=5.00, doc=""
 )
 
-PARTICIPANT_FIELDS = ['exchange_list']
+PARTICIPANT_FIELDS = ['exchange_list', 'player_order', 'player_colors']
 SESSION_FIELDS = []
 
 # ISO-639 code

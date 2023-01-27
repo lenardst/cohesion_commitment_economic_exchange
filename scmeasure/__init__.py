@@ -1,10 +1,16 @@
 from otree.api import *
 
+import settings
+from negotiation.reputation import DisplayPlayer
+import random
+
 
 class C(BaseConstants):
     NAME_IN_URL = 'scmeasure'
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 1
+    GIFT = cu(1)
+    GIFT_FACTOR = 3
 
 
 class Subsession(BaseSubsession):
@@ -16,12 +22,14 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    gift1 = models.IntegerField(initial=0, min=0, max=10)
-    gift2 = models.IntegerField(initial=0, min=0, max=10)
-    gift3 = models.IntegerField(initial=0, min=0, max=10)
-    gift4 = models.IntegerField(initial=0, min=0, max=10)
-    gift5 = models.IntegerField(initial=0, min=0, max=10)
-    gift6 = models.IntegerField(initial=0, min=0, max=10)
+    gift1 = models.CurrencyField(initial=0, min=0, max=10)
+    gift2 = models.CurrencyField(initial=0, min=0, max=10)
+    gift3 = models.CurrencyField(initial=0, min=0, max=10)
+    gift4 = models.CurrencyField(initial=0, min=0, max=10)
+    gift5 = models.CurrencyField(initial=0, min=0, max=10)
+    gift6 = models.CurrencyField(initial=0, min=0, max=10)
+    gift_remaining = models.CurrencyField(initial=0)
+    gift_received = models.CurrencyField(initial=0)
 
     close1 = models.IntegerField(widget=widgets.RadioSelectHorizontal,
                                  choices=[[0, 'very distant'], [1, 'distant'], [2, 'rather distant'],
@@ -104,6 +112,7 @@ class Player(BasePlayer):
 
 
 class ResultsWaitPage(WaitPage):
+    body_text = "Please wait until the other participants have sent their gifts and completed the survey."
     pass
 
 
@@ -114,7 +123,8 @@ class GiftGiving(Page):
     @staticmethod
     def vars_for_template(player: Player):
         return dict(
-            other_players=[p.id_in_group for p in player.get_others_in_subsession()]
+            other_players=[DisplayPlayer(p.id_in_group, player.participant.player_colors[player.participant.player_order.index(p.id_in_group)]) for p in player.get_others_in_subsession()],
+            exchange_partners=[e.partner.number for e in player.participant.exchange_list]
         )
 
     @staticmethod
@@ -123,8 +133,17 @@ class GiftGiving(Page):
             other_players=[p.id_in_group for p in player.get_others_in_subsession()]
         )
 
-    pass
+    def before_next_page(player: Player, timeout_happened):
+        player_to_gift = random.choice(player.participant.player_order)
+        player_gift = [player.gift1, player.gift2, player.gift3, player.gift4, player.gift5, player.gift6][
+            player_to_gift]
+        player.gift_remaining = C.GIFT - player_gift
+        player.payoff += player.gift_remaining
+        other = player.group.get_player_by_id(player_to_gift)
+        other.gift_received += player_gift * C.GIFT_FACTOR
+        other.payoff += other.gift_received
 
+    pass
 
 class Questionaire(Page):
     form_model = 'player'
@@ -142,7 +161,8 @@ class Questionaire(Page):
     @staticmethod
     def vars_for_template(player: Player):
         return dict(
-            other_players=[p.id_in_group for p in player.get_others_in_subsession()],
+            other_players=[DisplayPlayer(p.id_in_group, player.participant.player_colors[player.participant.player_order.index(p.id_in_group)]) for p in player.get_others_in_subsession()],
+            exchange_partners=[e.partner.number for e in player.participant.exchange_list]
         )
 
     @staticmethod
@@ -155,7 +175,16 @@ class Questionaire(Page):
 
 
 class Results(Page):
+    def vars_for_template(player: Player):
+        return dict(
+            participation_fee=cu(settings.SESSION_CONFIG_DEFAULTS['participation_fee']),
+            trade_earnings=player.participant.payoff-player.gift_remaining-player.gift_received,
+            gift_remaining=player.gift_remaining,
+            gift_received=player.gift_received,
+            total=player.participant.payoff+settings.SESSION_CONFIG_DEFAULTS['participation_fee']
+        )
+
     pass
 
 
-page_sequence = [GiftGiving, Questionaire, Results]
+page_sequence = [GiftGiving, Questionaire, ResultsWaitPage, Results]

@@ -14,8 +14,5 @@ class Instruction(Page):
 class Payment(Page):
     pass
 
-class Game_Instruction(Page):
-    pass
 
-
-page_sequence = [Instruction, Payment, Game_Instruction]
+page_sequence = [Instruction, Payment]

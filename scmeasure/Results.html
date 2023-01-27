@@ -3,9 +3,31 @@
 {{ endblock }}
 {{ block content }}
 
-<p> </p>
+<p>Please find your payoff in the table below. The payoff will be given to you in cash at the registration desk before you leave the lab.</p>
 
-{{ formfields }}
+<table>
+    <tr>
+    <td> Participation pay-off</td>
+    <td> {{participation_fee}}</td>
+    </tr>
+    <tr>
+    <td> Pay-off trading</td>
+    <td> {{trade_earnings}}</td>
+    </tr>
+    <tr>
+    <td> Remaining gift budget</td>
+    <td> {{gift_remaining}}</td>
+    </tr>
+    <tr>
+    <td> Received gift(s)</td>
+    <td> {{gift_received}}</td>
+    </tr>
+    <tr>
+    <td> <b>TOTAL</b></td>
+    <td> <b>{{total}}</b></td>
+    </tr>
+
+    </table>
 
     {{ next_button }}
 
