@@ -7,7 +7,7 @@
 
 <hr>
 {{ for p in other_players }}
-    <p> How would you describe your relationship to <b>participant {{p.label}} </b>  on each of the following?</p>
+    <p> How would you describe your relationship to participant <b style="color:{{p.label}}">{{p.label}}</b> on each of the following?</p>
 <table class="table">
         <tbody><tr>
             <th><label for="id_close{{p}}">Close/Distant</label></th>
@@ -66,11 +66,11 @@
 
  {{ if p.number not in exchange_partners }}
 
-<p> You did not trade with participant {{p.label}}.</p>
+<p> You did not trade with participant <b style="color:{{p.label}}">{{p.label}}</b>.</p>
 
 {{else}}
 
-<p> You may remind yourself of your trade history with participant {{p.label}} this table:</p>
+<p> You may remind yourself of your trade history with participant <b style="color:{{p.label}}">{{ p.label }}</b> this table:</p>
 
         <table class="reputation_table">
   <tr>
@@ -85,7 +85,7 @@
             {{if exchange.partner.number == p.number }}
     <tr>
         <td>{{ exchange.round }} </td>
-        <td>{{ exchange.partner.label }}</td>
+        <td><b style="color:{{exchange.partner.label}}">{{ exchange.partner.label }}</b></td>
         <td>{{ exchange.amount_agreed_sent }} </td>
         <td>{{ exchange.amount_sent }} </td>
         <td>{{ exchange.amount_agreed_receive }} </td>

@@ -30,8 +30,8 @@
   </tr>
         {{ for reputation in reputation_list }}
     <tr>
-        <td>Participant {{ reputation.player.label }}</td>
-        <td><button type="button" id="select-button{{ reputation.player.number }}" class="select-button" onclick="selectRecipient({{ reputation.player.number }})" disabled>Select participant {{ reputation.player.label }}</button></td>
+        <td>Participant <b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></td>
+        <td><button type="button" id="select-button{{ reputation.player.number }}" class="select-button" onclick="selectRecipient({{ reputation.player.number }})" disabled>Select participant <b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></button></td>
         <td>{{ reputation.reputation_mean }} </td>
         <td>{{ reputation.reputation_list }}</td>
         <td id="received-cell-{{ reputation.player.number }}" class="received-cell"></td>
@@ -161,8 +161,9 @@
     function displayExchange(partner, send, receive){
         document.getElementById('reputation').style.display = 'none';
         document.getElementById('negotiation').style.display = 'none';
-        document.getElementById('display-exchange').innerHTML = 'You have agreed with participant ' + player_colors[player_order.indexOf(partner)] + ' to send ' + send + ' units and to receive ' + receive
-+ ' units.'}
+        document.getElementById('display-exchange').innerHTML = 'You have agreed with participant <b style="color:' + player_colors[player_order.indexOf(partner)]+ '">' + player_colors[player_order.indexOf(partner)] + '</b> to send ' + send + ' units and to receive ' + receive
++ ' units.';
+    }
 
     document.getElementById('offer').addEventListener('input', changeDemand)
     function changeDemand(){
@@ -181,7 +182,7 @@
         }
         document.getElementById('select-button' + number).classList.add('active-select-button');
         document.getElementById("recipient").value = number;
-        document.getElementById("display-recipient").innerHTML = "You selected participant " + player_colors[player_order.indexOf(number)] + ".";
+        document.getElementById("display-recipient").innerHTML = "You selected participant <b style='color:" + player_colors[player_order.indexOf(number)]+ "'>" + player_colors[player_order.indexOf(number)] + "</b>.";
         document.getElementById('button_send').removeAttribute('disabled');
 }
 
@@ -272,6 +273,12 @@
 
 .active-select-button {
         background-color: #72b2ff;
+}
+
+button:disabled,
+button[disabled]{
+    color: black;
+    opacity: .7;
 }
 
 </style>

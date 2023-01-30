@@ -17,7 +17,7 @@ class C(BaseConstants):
     PAY_BUDGET_UNIT = 0.01
     UNIT_BUDGET = 20
     DEVIATION = 5
-    PLAYER_COLORS = ['green','blue', 'yellow', 'purple', 'red']
+    PLAYER_COLORS = ['GREEN', 'BLUE', 'ORANGE', 'PURPLE', 'RED']
 pass
 
 

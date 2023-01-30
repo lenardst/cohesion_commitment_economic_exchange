@@ -5,7 +5,7 @@
 
 {{ if player.agreed }}
 
-<p>You receive <b>{{player.payoff}}</b> for this round. {{remaining_budget}} units have remained from your budget resulting in €{{remaining_budget_pay}}. Participant {{exchange_partner}} sent {{net_receive}} units resulting in €{{points_form_partner}}. He or she sent {{if player.deviation_partner > 0 }} {{player.deviation_partner}} unit(s) more than agreed upon{{ else }} {{ if 0 > player.deviation_partner }}{{abs_deviation_partner}} unit(s) less than agreed{{ else }} the amount agreed upon{{endif}}{{endif}}. </p>
+<p>You receive <b>{{player.payoff}}</b> for this round. {{remaining_budget}} units have remained from your budget resulting in €{{remaining_budget_pay}}. Participant <b style="color:{{exchange_partner}}">{{exchange_partner }}</b> sent {{net_receive}} units resulting in €{{points_form_partner}}. He or she sent {{if player.deviation_partner > 0 }} {{player.deviation_partner}} unit(s) more than agreed upon{{ else }} {{ if 0 > player.deviation_partner }}{{abs_deviation_partner}} unit(s) less than agreed{{ else }} the amount agreed upon{{endif}}{{endif}}. </p>
 
 {{ else }}
 
