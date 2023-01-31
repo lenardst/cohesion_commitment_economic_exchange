@@ -146,9 +146,11 @@
             buttons[i].disabled = true;
             buttons[i].classList.remove('active-select-button');
         }
-        $.each(player_list, function(index, number){
-            document.getElementById('select-button' + number).removeAttribute('disabled')
-        });
+        console.log(player_list)
+        for (var i = 0; i < player_list.length; i++) {
+            console.log('select-button' + player_list[i])
+            document.getElementById('select-button' + player_list[i]).removeAttribute('disabled');
+        }
         if (document.getElementById('recipient').value == ""){
             document.getElementById('display-recipient').innerHTML = "Please select a participant from the table above.";
         } else if (!player_list.includes(document.getElementById('recipient').value)){

@@ -12,7 +12,6 @@ class C(BaseConstants):
     NAME_IN_URL = 'negotiation'
     PLAYERS_PER_GROUP = 6
     NUM_ROUNDS = numpy.random.binomial(20, 0.5) + 20
-    REPUTATION_SYSTEM = True
     PAY_TRADED_UNIT = 0.02
     PAY_BUDGET_UNIT = 0.01
     UNIT_BUDGET = 20
@@ -57,18 +56,24 @@ class Offer(ExtraModel):
 
 # PAGES
 
+class FirstWaitPage(WaitPage):
+    body_text = "Please wait until the other participants in your session have arrived."
+
+    def is_displayed(player: Player):
+        return player.round_number == 1
+
+    def after_all_players_arrive(group: Group):
+        for player in group.get_players():
+            player.participant.player_order = [p.id_in_group for p in player.get_others_in_group()].copy()
+            random.shuffle(player.participant.player_order)
+            player.participant.player_colors = C.PLAYER_COLORS.copy()
+            random.shuffle(player.participant.player_colors)
+    pass
+
 class Game_Instruction(Page):
     @staticmethod
     def is_displayed(player: Player):
         return player.round_number == 1
-
-
-    def before_next_page(player: Player, timeout_happened):
-        player.participant.player_order = [p.id_in_group for p in player.get_others_in_subsession()].copy()
-        random.shuffle(player.participant.player_order)
-        player.participant.player_colors = C.PLAYER_COLORS.copy()
-        random.shuffle(player.participant.player_colors)
-    pass
 
 
 class Negotiation(Page):
@@ -81,7 +86,7 @@ class Negotiation(Page):
         reputation_list = []
         for i in range(5):
             deviations = [i.field_maybe_none('deviation') for i in player.group.get_player_by_id(player.participant.player_order[i]).in_previous_rounds() if
-                          C.REPUTATION_SYSTEM or i.field_maybe_none('exchange_partner') is player.id_in_group]
+                          player.session.config['rs'] or i.field_maybe_none('exchange_partner') is player.id_in_group]
             reputation_list.append(Reputation(DisplayPlayer(player.participant.player_order[i], player.participant.player_colors[i]), deviations))
         return dict(
             reputation_list=reputation_list,
@@ -152,7 +157,7 @@ class Negotiation(Page):
                                           and o.closed == False]
                         for o in closing_offers:
                             o.closed = True
-                        other_players = [p for p in offer.receiver.get_others_in_subsession() if
+                        other_players = [p for p in offer.receiver.get_others_in_group() if
                                          p.id_in_group is not offer.sender.id_in_group]
                         if all_agreed(player):
                             return {0: ['N']}
@@ -275,5 +280,5 @@ class Result(Page):
     pass
 
 
-page_sequence = [Game_Instruction, WaitForInstructions, Negotiation, WaitForExchange, Deviation, WaitAfterExchange,
+page_sequence = [FirstWaitPage, Game_Instruction, WaitForInstructions, Negotiation, WaitForExchange, Deviation, WaitAfterExchange,
                  Result]

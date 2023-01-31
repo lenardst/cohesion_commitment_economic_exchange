@@ -25,8 +25,8 @@ def all_agreed(player):
 
 
 def get_sent_offers(player, offers):
-    print(offers)
-    print([[o.offer_id, o.receiver.id_in_group, o.offer, o.demand] for o in offers if o.sender.id_in_group is player.id_in_group and not o.closed])
+    #print(offers)
+    #print([[o.offer_id, o.receiver.id_in_group, o.offer, o.demand] for o in offers if o.sender.id_in_group is player.id_in_group and not o.closed])
     return [[o.offer_id, o.receiver.id_in_group, o.offer, o.demand] for o in offers if o.sender.id_in_group is player.id_in_group and not o.closed]
 
 

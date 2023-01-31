@@ -3,10 +3,17 @@ from os import environ
 SESSION_CONFIGS = [
      dict(
          name='EcoEx_RS',
-         display_name="Economic Exchange and Reputation Systems",
+         display_name="Economic Exchange and Reputation Systems (Treatment)",
          app_sequence=['instruction', 'negotiation', 'scmeasure'],
          num_demo_participants=6,
-     )
+         rs=True
+     ),
+    dict(
+        name='EcoEx_NoRS',
+         display_name="Economic Exchange and Reputation Systems (Baseline)",
+         app_sequence=['instruction', 'negotiation', 'scmeasure'],
+         num_demo_participants=6,
+         rs=False)
 ]
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
@@ -20,6 +27,18 @@ SESSION_CONFIG_DEFAULTS = dict(
 
 PARTICIPANT_FIELDS = ['exchange_list', 'player_order', 'player_colors']
 SESSION_FIELDS = []
+
+# ROOMS
+ROOMS = [
+    dict(
+        name='RoomT',
+        use_secure_urls=False,
+        display_name='RoomT',
+        participant_label_file='_rooms/roomT.txt'
+    )
+
+]
+
 
 # ISO-639 code
 # for example: de, fr, ja, ko, zh-hans
