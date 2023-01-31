@@ -100,14 +100,14 @@ class Negotiation(Page):
 
     @staticmethod
     def live_method(player, data):  # Data is a list of values. First value specifies the type of action
-        print(str(player.id_in_group) + ',' + str(data))
+        #print(str(player.id_in_group) + ',' + str(data))
         if data[0] == 'O':  # O for create offer
             receiver = player.group.get_player_by_id(int(data[1]))
             offers = Offer.filter(group=player.group)
             if check_offer_legal(player, receiver, offers):
                 offer = Offer.create(offer_id=len(Offer.filter()) + 1, sender=player, receiver=receiver,
                                      group=player.group, offer=int(data[2]), demand=int(data[3]))
-                print(['O', offer.offer_id, offer.sender.id_in_group, offer.demand, offer.offer])
+                #print(['O', offer.offer_id, offer.sender.id_in_group, offer.demand, offer.offer])
                 offers = Offer.filter(group=player.group)
                 return {offer.receiver.id_in_group: ['R', get_available_players(offer.receiver, offers),
                                                      get_sent_offers(offer.receiver, offers),
@@ -117,7 +117,7 @@ class Negotiation(Page):
                                                    get_open_offers(offer.sender, offers)]}
             else:
                 return {player.id_in_group: ['E',
-                                             'This offer is not allowed because you sent it to a participant how agreed on an exchange already or one of the offers you sent this participant is still pending.']}
+                                             'This offer is not allowed because you sent it to a participant who agreed on a trade already or one of the offers you sent this participant is still pending.']}
         else:
             if data[0] == 'D':  # D for decline
                 offer = Offer.filter(receiver=player, offer_id=data[1])[0]
@@ -227,7 +227,7 @@ class Deviation(Page):
 
 
 class WaitAfterExchange(WaitPage):
-    body_text = "Please wait until the other participants have completed their exchanges."
+    body_text = "Please wait until the other participants have completed their trades."
 
     @staticmethod
     def after_all_players_arrive(group):
