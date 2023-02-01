@@ -113,8 +113,8 @@ class Player(BasePlayer):
 
 class ResultsWaitPage(WaitPage):
     body_text = "Please wait until the other participants have sent their gifts and completed the survey."
-    pass
 
+    pass
 
 class GiftGiving(Page):
     form_model = 'player'
@@ -142,7 +142,6 @@ class GiftGiving(Page):
         other = player.group.get_player_by_id(player_to_gift)
         other.gift_received += player_gift * C.GIFT_FACTOR
         other.payoff += other.gift_received
-
     pass
 
 class Questionaire(Page):
@@ -175,13 +174,15 @@ class Questionaire(Page):
 
 
 class Results(Page):
+    def before_next_page(player: Player, timeout_happened):
+            player.payoff = round(player.payoff,1)
+
     def vars_for_template(player: Player):
         return dict(
-            participation_fee=cu(settings.SESSION_CONFIG_DEFAULTS['participation_fee']),
             trade_earnings=player.participant.payoff-player.gift_remaining-player.gift_received,
             gift_remaining=player.gift_remaining,
             gift_received=player.gift_received,
-            total=player.participant.payoff+settings.SESSION_CONFIG_DEFAULTS['participation_fee']
+            total=player.participant.payoff,
         )
 
     pass
