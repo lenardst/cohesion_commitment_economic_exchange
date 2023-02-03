@@ -3,15 +3,15 @@
 {{ endblock }}
 {{ block content }}
 
-<p>In the following, you will be trading units with five other participants to earn money. In the beginning of each round, you will be given
-    {{C.UNIT_BUDGET}} units. You will trade units by sending offers to other participants and by receiving offers from other participants. In each round, you can only make one trade agreement with one other participant. That is, if you accept an offer or one of your offers is accepted you have come to an agreement, and you are excluded from negotiation for this round. The amount you send and the amount you receive always add up to {{C.UNIT_BUDGET}} units. For each unit you receive through trade, you will receive two points. For each unit left from your budget, you will receive one point. You will be playing 30 rounds.</p>
+<p>In the following, you will be trading units with five other participants to earn money. You will play a random number of rounds between 20 and 30. In each round, you will be given {{C.UNIT_BUDGET}} units. Each round consists of three steps. First, you will send trading offers to other participants and receive trading offers from other participants. The amount you send and the amount you receive always add up to {{C.UNIT_BUDGET}} units. For each unit you receive through trade, you will receive {{ C.PAY_TRADED_UNIT }}. For each unit left from your budget, you will receive {{ C.PAY_BUDGET_UNIT }}.</p> <p>Second, you may accept or decline offers sent by other participants. If you decline an offer, the sender can send you another offer. If you accept an offer, you agreed to a trade and all of your pending offers will be closed since you can only do one trade with one other participant per round. That is, if you accept an offer you are excluded from further negotiation for the ongoing round.</p>
 
-<p>After agreeing to a trade, you will be asked how many units you want to send. You will be allowed to send up to
-    {{C.DEVIATION}} units more or less than agreed on. The participant you trade with might also send up to {{C.DEVIATION}} units more or less than the agreed amount. After both of you sent the units, you will be informed about the decision of participant you traded with.</p>
+<p>Third, after agreeing to a trade, you will be asked how many units you want to send. You will be allowed to send up to
+    {{C.DEVIATION}} units more or less than agreed on. The participant you trade with might also send up to {{C.DEVIATION}} units more or less than the agreed amount. After both of you sent the units, you will be informed about the decision of the participant you traded with.</p>
 
 <p>While negotiating your trades, you will be informed about the differences between agreed and sent amount of other participants in all previous trades (with you / with all five participants). Analogously, in all following rounds, your differences between agreed and sent amounts will be displayed to (the respective person you traded with / all five participants).</p>
 
-<p>After 30 rounds of trading, you will be asked to send gifts to other participants in the session. Next, you will answer a set of questions about your relationships to the participants in the session. In the end, you will learn about your overall payment.</p>
+
+<p>After the last round of trading, you will be asked to send gifts to other participants in the session. Next, you will answer a set of questions about your relationships to the participants in the session. In the end, you will learn about your overall earnings.</p>
 
     {{ next_button }}
 
