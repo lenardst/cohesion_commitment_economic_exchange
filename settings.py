@@ -36,7 +36,6 @@ ROOMS = [
         display_name='RoomT',
         participant_label_file='_rooms/roomT.txt'
     )
-
 ]
 
 

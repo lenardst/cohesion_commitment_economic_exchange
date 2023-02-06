@@ -36,6 +36,11 @@ class Player(BasePlayer):
     deviation = models.IntegerField(min=-C.DEVIATION, max=C.DEVIATION)
     deviation_partner = models.IntegerField()
     round_net = models.IntegerField()
+    reason_no_exchange = models.IntegerField(choices=[
+        [1, 'I did not want to trade'],
+        [2, 'I could not trade with the preferred participant(s).'],
+        [3, 'I ran out of time.'],
+        [4, 'I was inattentive.']], initial=0, label='Why did you not agree on a trade in the past negotiation?')
     pass
 
 
@@ -79,7 +84,13 @@ class Game_Instruction(Page):
 class Negotiation(Page):
     # form_model = 'player'
     # form_fields = ['exchange_partner', 'send', 'receive']
-    # timeout_seconds = 150
+
+    @staticmethod
+    def get_timeout_seconds(player):
+        if player.round_number == 1:
+            return 300
+        else:
+            return 180
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -207,8 +218,6 @@ class Deviation(Page):
     form_model = 'player'
     form_fields = ['deviation']
 
-    # timeout_seconds = 45
-
     @staticmethod
     def is_displayed(player):
         return player.agreed
@@ -231,6 +240,16 @@ class Deviation(Page):
     pass
 
 
+class NoExchangePage(Page):
+    def is_displayed(player):
+        return not player.agreed
+
+    form_model = 'player'
+    form_fields = ['reason_no_exchange']
+
+    pass
+
+
 class WaitAfterExchange(WaitPage):
     body_text = "Please wait until the other participants have completed their trades."
 
@@ -248,7 +267,6 @@ class WaitAfterExchange(WaitPage):
 
 
 class Result(Page):
-    # timeout_seconds = 30
 
     def before_next_page(player: Player, timeout_happened):
         if player.round_number == 1:
@@ -280,5 +298,5 @@ class Result(Page):
     pass
 
 
-page_sequence = [FirstWaitPage, Game_Instruction, WaitForInstructions, Negotiation, WaitForExchange, Deviation, WaitAfterExchange,
-                 Result]
+page_sequence = [FirstWaitPage, Game_Instruction, WaitForInstructions, Negotiation, WaitForExchange, Deviation,
+                 NoExchangePage, WaitAfterExchange, Result]
