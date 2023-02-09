@@ -11,7 +11,7 @@ doc = """Negotiation between players"""
 class C(BaseConstants):
     NAME_IN_URL = 'negotiation'
     PLAYERS_PER_GROUP = 6
-    NUM_ROUNDS = numpy.random.binomial(10, 0.5) + 20
+    NUM_ROUNDS = 3  # numpy.random.binomial(10, 0.5) + 20
     PAY_TRADED_UNIT = cu(0.03)
     PAY_BUDGET_UNIT = cu(0.01)
     UNIT_BUDGET = 20
@@ -41,6 +41,10 @@ class Player(BasePlayer):
         [2, 'I could not trade with the preferred participant(s).'],
         [3, 'I ran out of time.'],
         [4, 'I was inattentive.']], initial=0, label='Why did you not agree on a trade in the past negotiation?')
+    quiz1 = models.BooleanField(label='If you agree to an exchange that you receive 10 units, is it garunteed that you will actually receive at least 10 units?', choices=[[True, 'True'], [False, 'False']])
+    quiz2 = models.BooleanField(label='If you accept an offer, another participant can still accept an offer of yours in the same round.', choices=[[True, 'True'], [False, 'False']])
+    quiz3 = models.IntegerField(label='If you send one unit less than agreed to another participant, how many participants will learn about your decision?')
+
     pass
 
 
@@ -75,10 +79,37 @@ class FirstWaitPage(WaitPage):
             random.shuffle(player.participant.player_colors)
     pass
 
+
 class Game_Instruction(Page):
     @staticmethod
     def is_displayed(player: Player):
         return player.round_number == 1
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(
+            rs=player.session.config['rs']
+        )
+
+
+class Quiz(Page):
+    form_model = 'player'
+    form_fields = ['quiz1', 'quiz2', 'quiz3']
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.round_number == 1
+
+class Answers(Page):
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.round_number == 1
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(
+            rs=player.session.config['rs']
+        )
 
 
 class Negotiation(Page):
@@ -298,5 +329,5 @@ class Result(Page):
     pass
 
 
-page_sequence = [FirstWaitPage, Game_Instruction, WaitForInstructions, Negotiation, WaitForExchange, Deviation,
+page_sequence = [FirstWaitPage, Game_Instruction, Quiz, Answers, WaitForInstructions, Negotiation, WaitForExchange, Deviation,
                  NoExchangePage, WaitAfterExchange, Result]

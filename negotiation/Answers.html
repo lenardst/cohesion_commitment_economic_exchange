@@ -1,0 +1,40 @@
+{{ block title }}
+    Correct Answers
+{{ endblock }}
+{{ block content }}
+
+<b>Question: </b>If you agree to an exchange that you receive 10 units, is it garunteed that you will actually receive at least 10 units?
+<br>
+<b>Your answer: </b>{{player.quiz1}}
+<br>
+<b>Correct answer: </b> False
+<br>
+<b>Explanation: </b> The participant you agreed with might send up to five units more or less. That means that you will receive at least 5 and at most 15 units from the described trade.
+
+<hr>
+
+<b>Question: </b>If you accept an offer, another participant can still accept an offer of yours in the same round.
+<br>
+<b>Your answer: </b>{{player.quiz2}}
+<br>
+<b>Correct answer: </b> False
+<br>
+<b>Explanation: </b> Once you accept an offer all other offers you sent and all other offers you received are closed. That means that no other player than the one you came to an agreement with will be able to exchange with you in the same round.
+
+<hr>
+<b>Question: </b>If you send one unit less than agreed on to another participant, how many participants will learn about your decision?
+<br>
+<b>Your answer: </b>{{player.quiz3}}
+<br>
+<b>Correct answer: </b> {{if rs }} 5 {{else}} 1 {{endif}}
+<br>
+<b>Explanation: </b> {{if rs }} All participants learn about the difference between the amount of units you agree on and the amount of units you send. It will be displayed to them in all following rounds. {{else}} Only the participant you trade with learns about the difference between the amount of units you agree on and the amount of units you send. It will be displayed to her/him in all following rounds. {{endif}}
+
+<br>
+<br>
+
+{{ formfields }}
+
+    {{ next_button }}
+
+{{ endblock }}

@@ -3,21 +3,230 @@
 {{ endblock }}
 {{ block content }}
 
-<p>In the following, you will be trading units with five other participants to earn money. You will play a number of rounds between 20 and 30 that will be determined by a random process. In each round, you will be given {{C.UNIT_BUDGET}} units. Each round consists of three steps. First, you will send trading offers to other participants and receive trading offers from other participants. The amount you send and the amount you receive always add up to {{C.UNIT_BUDGET}} units. For each unit you receive through trade, you will receive {{ C.PAY_TRADED_UNIT }}. For each unit left from your budget, you will receive {{ C.PAY_BUDGET_UNIT }}. </p>
+<h4>Sending Offers</h4>
 
+<p>In the following, you will be trading units with five other participants to earn money. You will play a between 20 and 30 rounds. The exact number of rounds will be determined by a random process. In each round, you will be given {{C.UNIT_BUDGET}} units. Each round consists of three steps. First, you will send trading offers to other participants and receive trading offers from other participants. The amount you offer and the amount you demand always add up to {{C.UNIT_BUDGET}} units. For each unit you receive through trade, you will receive {{ C.PAY_TRADED_UNIT }}. For each unit left from your budget, you will receive {{ C.PAY_BUDGET_UNIT }}. Below you can see the tool you will use to send offers. </p>
+
+<h4>Responding to Offers</h4>
 <p>Second, you may accept or decline offers sent by other participants. If you decline an offer, the sender can send you another offer. If you accept an offer, you agreed to a trade and all of your pending offers will be closed since you can only do one trade with one other participant per round. That is, if you accept an offer you are excluded from further negotiation for the ongoing round. You will have three minutes (five minutes in the first round) to negotiate a trade with another participant. If you have not agreed to a trade after three minutes, you will not trade in the ongoing round.</p>
 
+<h4>Sending Units</h4>
 <p>Third, after agreeing to a trade, you will be asked how many units you want to send. You will be allowed to send up to
     {{C.DEVIATION}} units more or less than agreed on. The participant you trade with might also send up to {{C.DEVIATION}} units more or less than the agreed amount. After both of you sent the units, you will be informed about the decision of the participant you traded with.</p>
 
-<p>While negotiating your trades, you will be informed about the differences between agreed and sent amount of other participants in all previous trades (with you / with all five participants). Analogously, in all following rounds, your differences between agreed and sent amounts will be displayed to (the respective person you traded with / all five participants).</p>
+<h4>Information about other Participants</h4>
+<p>While negotiating your trades, you will be informed about the differences between agreed and sent amount of other participants in all previous trades {{ if rs }} with all five participants {{else}} with you {{endif}}. Analogously, in all following rounds, your differences between agreed and sent amounts will be displayed to {{ if rs }} all five other participants {{else}} the respective participant you traded with{{endif}}.</p>
 
-<p>Below, you see the interface you will use for the negotiation. You can see, that the participant has received an offer from participant ORANGE and has sent an offer to participant RED. He or she might accept or decline the offer from participant ORANGE. You can also see that the participant has information about the past behavior of participant BLUE and GREEN...</p>
+<p> Below, you see the interface that you will use for the negotiation. The table displays all information about other participants and the offers you sent and received. When you select a participant, you can send an offer using the tool below the table. You may hover offer the <span class="tooltip" style="z-index: 6"><b>i</b>
+  <span class="tooltiptext">Hover over this icon to learn more about the element.</span>
+</span> to learn more about the element you are looking at.
+</p>
 
-<img src="{{static 'pictures/trading_table.jpg' }}" width="700px"/>
+<div id="reputation">
+        <table id="reputation_table">
+  <tbody><tr>
+    <th>Participant</th>
+      <th>Select for Offer <div class="tooltip" style="z-index: 6"><b>i</b>
+  <span class="tooltiptext">Use the buttons to select a participant you want to send an offer to. Next, chose an amount and send the offer below the table.</span>
+</div></th>
+    <th>Average difference between agreed and sent units <div class="tooltip" style="z-index: 5"><b>i</b>
+  <span class="tooltiptext">This column shows the average difference between agreed and sent units for the respective participant. A positive number means that a participant has sent more than agreed in the past. A negative number means that a participant has sent less than agreed in the past.</span>
+</div></th>
+    <th>List of differences between agreed and sent units <div class="tooltip" style="z-index: 4"><b>i</b>
+  <span class="tooltiptext">This column shows the list of differences between agreed and sent units for the respective participant. A positive number means that a participant sent more than agreed. A negative number means that this participant sent less than agreed. The difference from the first trade is listed first and the most recent one is listed last.</span>
+</div></th>
+      <th>Offers from other participants <div class="tooltip" style="z-index: 3"><b>i</b>
+  <span class="tooltiptext">This column shows the offers you have received from other participants. You can accept or decline the offer in the right column.</span> </div></th>
+      <th>Accept/decline sent offers <div class="tooltip" style="z-index: 2"><b>i</b>
+  <span class="tooltiptext">In this column, you can accept or decline offers from other participants. Once you accept an offer, you cannot change your trade anymore. If you agreed to a trade, all your pending offers will be closed.</span> </div></th>
+      <th>Offers to other participants <div class="tooltip" style="z-index: 1"><b>i</b>
+  <span class="tooltiptext">This column shows the offers you have sent to other participants. If they decline the offer, it will disappear from this column, and you can send another one. If they accept the offer, you cannot change your trade anymore and all your pending offers will be closed.</span></div></th>
+  </tr>
 
-<p>After the last round of trading, you will be asked to send gifts to other participants in the session. Next, you will answer a set of questions about your relationships to the participants in the session. In the end, you will learn about your overall earnings.</p>
+    <tr>
+        <td>Participant <b style="color:RED">RED</b></td>
+        <td><button type="button" id="select-button6" class="select-button" onclick="selectRecipient(6)">Select participant <b style="color:RED">RED</b></button></td>
+        <td>0 </td>
+        <td>[]</td>
+        <td id="received-cell-6" class="received-cell"></td>
+        <td id="feedback-cell-6" class="feedback-cell"></td>
+        <td id="sent-cell-6" class="sent-cell"></td>
+    </tr>
+
+    <tr>
+        <td>Participant <b style="color:GREEN">GREEN</b></td>
+        <td><button type="button" id="select-button1" class="select-button" onclick="selectRecipient(1)">Select participant <b style="color:GREEN">GREEN</b></button></td>
+        <td>0 </td>
+        <td>[]</td>
+        <td id="received-cell-1" class="received-cell"></td>
+        <td id="feedback-cell-1" class="feedback-cell"></td>
+        <td id="sent-cell-1" class="sent-cell"></td>
+    </tr>
+
+    <tr>
+        <td>Participant <b style="color:ORANGE">ORANGE</b></td>
+        <td><button type="button" id="select-button2" class="select-button" onclick="selectRecipient(2)">Select participant <b style="color:ORANGE">ORANGE</b></button></td>
+        <td>0 </td>
+        <td>[]</td>
+        <td id="received-cell-2" class="received-cell"></td>
+        <td id="feedback-cell-2" class="feedback-cell"></td>
+        <td id="sent-cell-2" class="sent-cell"></td>
+    </tr>
+
+    <tr>
+        <td>Participant <b style="color:BLUE">BLUE</b></td>
+        <td><button type="button" id="select-button4" class="select-button" onclick="selectRecipient(4)">Select participant <b style="color:BLUE">BLUE</b></button></td>
+        <td>0 </td>
+        <td>[]</td>
+        <td id="received-cell-4" class="received-cell"></td>
+        <td id="feedback-cell-4" class="feedback-cell"></td>
+        <td id="sent-cell-4" class="sent-cell"></td>
+    </tr>
+
+    <tr>
+        <td>Participant <b style="color:PURPLE">PURPLE</b></td>
+        <td><button type="button" id="select-button5" class="select-button" onclick="selectRecipient(5)">Select participant <b style="color:PURPLE">PURPLE</b></button></td>
+        <td>0 </td>
+        <td>[]</td>
+        <td id="received-cell-5" class="received-cell"></td>
+        <td id="feedback-cell-5" class="feedback-cell"></td>
+        <td id="sent-cell-5" class="sent-cell"></td>
+    </tr>
+
+            </tbody></table>
+    </div>
+
+<hr>
+
+<div id="negotiation">
+        <p><b>Send offers</b> <span class="tooltip"><b>i</b>
+      <span class="tooltiptext">Send an offer by selecting a participant, choosing an amount and clicking the button below. The offered and the demanded amount always add up to 20.</span>
+</span></p>
+    <p id="sendOffer">
+        <b><span id="display-recipient">Please select a participant from the table above.</span></b>
+        <input type="hidden" name="recipient" id="recipient" min="1" max="6">
+        </p><table id="slider_table">
+            <tbody><tr>
+                        <td style="border:none;" class="quant-cell-left">You receive: <br><span id="left">10 (Your pay-off: 0.30 €)</span></td>
+                        <td style="border:none;" class="quant-cell-right">The other receives: <br><span id="right">10 (Other's pay-off: 0.30 €)</span></td>
+            </tr>
+            <tr>
+                        <td style="border:none;" colspan="2" id="slider-cell"><input type="range" id="offer" class="offer-slider" name="slider" min="0" max="20" value="10" step="1"></td>
+            </tr>
+                </tbody></table>
+        <input type="button" value="Send offer" id="button_send" disabled="">
+            </div>
+
+<br>
+
+
+<h4>Example</h4>
+<p>Below, you see the interface you will use for the negotiation. You can see, that the participant has received an offer from RED and GREEN and has sent an offer to BLUE and GREEN. He or she might accept or decline the offer from RED or GREEN. You can also see that the participant has information about the past differences between agreed and sent amounts of other players. Participant PURPLE, for example, has once sent two units more than agreed and once the agreed amount. You can also see that the participant can only send an offer to RED because BLUE and GREEN have not responded to her/his offer yet and ORANGE and PURPLE are excluded from the negotiation because they have reached an agreement.</p>
+
+<img src="{{static 'pictures/trading_table.svg' }}" width="900px"/>
+
+<p>In this example, the participant has accepted the offer of RED. In the next screen, (s)he will be asked to send units to RED. You see the according screen below. In this case, the participant decided to send one unit less than the agreed 12 units. In the next and in all following rounds, {{ if rs }} all five other participants {{else}} RED {{endif}} will be informed about the participant's decision to send one unit less than agreed in the present round.</p>
+
+<img src="{{static 'pictures/send_units.png' }}" width="700px"/>
+
+
+<h4>Task after Trading</h4>
+<p>After the last round of trading, you will be asked to send gifts to other participants in the session. The other participants will also have the possibility to send you a gift. Finally, you will answer a set of questions about your relationships to the participants in the session. In the end, you will learn about your overall earnings.</p>
 
     {{ next_button }}
 
+{{ endblock }}
+
+
+{% block style %}
+<style>
+  #reputation_table{
+    display: flex;
+    flex-direction: row;
+      text-align: center;
+  }
+
+   td, th, tr {
+    border: 1px solid black;
+    padding: 5px;
+  }
+
+.container {
+  grid-template-columns: 1fr 1fr; /* Two columns with equal width */
+}
+
+.full-block {
+    float: none;
+    display: inline-block;
+}
+
+.offer-slider {
+  width: 400px;
+}
+
+#button_send {
+    margin-top: 10px;
+    width: 400px;
+}
+
+.quant-cell-right{
+    text-align: right;
+}
+
+.width200 {
+    width: 250px;
+}
+
+  .otree-timer.alert.alert-warning {
+    padding: 5px 5px !important;
+      padding-left: 5px;
+}
+
+.otree-timer.alert.alert-warning > p {
+    margin-bottom: 0px !important;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+    opacity: 1;
+    color: white;
+    border-color: green;
+    background-color: green;
+    padding: 1px 5px;
+    border-radius: 10px;
+    z-index: 1;
+}
+
+.tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 5px;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 2;
+  top: -5px;
+  left: 105%;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.active-select-button {
+        background-color: #72b2ff;
+}
+
+button:disabled,
+button[disabled]{
+    color: black;
+    opacity: .7;
+}
+</style>
 {{ endblock }}
