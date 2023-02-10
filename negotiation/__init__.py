@@ -115,6 +115,7 @@ class Answers(Page):
 class Negotiation(Page):
     # form_model = 'player'
     # form_fields = ['exchange_partner', 'send', 'receive']
+    timer_text = 'Time left to negotiate:'
 
     @staticmethod
     def get_timeout_seconds(player):
