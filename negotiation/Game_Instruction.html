@@ -3,12 +3,14 @@
 {{ endblock }}
 {{ block content }}
 
-<h4>Sending Offers</h4>
 
-<p>In the following, you will be trading units with five other participants to earn money. You will play a between 20 and 30 rounds. The exact number of rounds will be determined by a random process. In each round, you will be given {{C.UNIT_BUDGET}} units. Each round consists of three steps. First, you will send trading offers to other participants and receive trading offers from other participants. The amount you offer and the amount you demand always add up to {{C.UNIT_BUDGET}} units. For each unit you receive through trade, you will receive {{ C.PAY_TRADED_UNIT }}. For each unit left from your budget, you will receive {{ C.PAY_BUDGET_UNIT }}. Below you can see the tool you will use to send offers. </p>
+<p>In the following, you will be trading units with five other participants to earn money. You will play between 20 and 30 rounds. The exact number of rounds will be determined by a random process. In each round, you will be given {{C.UNIT_BUDGET}} units. Each round consists of three steps: Sending offers, responding to offers, and sending units. </p>
+
+<h4>Sending Offers</h4>
+<p>First, you will send trading offers to other participants and receive trading offers from other participants. The amount you offer and the amount you demand always add up to {{C.UNIT_BUDGET}} units. For each unit you receive through trade, you will receive {{ C.PAY_TRADED_UNIT }}. For each unit left from your budget, you will receive {{ C.PAY_BUDGET_UNIT }}.</p>
 
 <h4>Responding to Offers</h4>
-<p>Second, you may accept or decline offers sent by other participants. If you decline an offer, the sender can send you another offer. If you accept an offer, you agreed to a trade and all of your pending offers will be closed since you can only do one trade with one other participant per round. That is, if you accept an offer you are excluded from further negotiation for the ongoing round. You will have three minutes (five minutes in the first round) to negotiate a trade with another participant. If you have not agreed to a trade after three minutes, you will not trade in the ongoing round.</p>
+<p>Second, you may accept or decline offers sent by other participants. If you decline an offer, the sender can send you another offer. If you accept an offer, you agreed to a trade and all of your pending offers will be closed since you can only do one trade with one other participant per round. That is if you accept an offer you are excluded from further negotiation for the ongoing round. You will have three minutes (five minutes in the first round) to negotiate a trade with another participant. If you have not agreed to trade after three minutes, you will not trade in the ongoing round.</p>
 
 <h4>Sending Units</h4>
 <p>Third, after agreeing to a trade, you will be asked how many units you want to send. You will be allowed to send up to
@@ -17,7 +19,7 @@
 <h4>Information about other Participants</h4>
 <p>While negotiating your trades, you will be informed about the differences between agreed and sent amount of other participants in all previous trades {{ if rs }} with all five participants {{else}} with you {{endif}}. Analogously, in all following rounds, your differences between agreed and sent amounts will be displayed to {{ if rs }} all five other participants {{else}} the respective participant you traded with{{endif}}.</p>
 
-<p> Below, you see the interface that you will use for the negotiation. The table displays all information about other participants and the offers you sent and received. When you select a participant, you can send an offer using the tool below the table. You may hover offer the <span class="tooltip" style="z-index: 6"><b>i</b>
+<p>Below, you see the interface that you will use for the negotiation. The table displays all information about other participants and the offers you sent and received. When you select a participant, you can send an offer using the tool below the table. You may hover offer the <span class="tooltip" style="z-index: 6"><b>i</b>
   <span class="tooltiptext">Hover over this icon to learn more about the element.</span>
 </span> to learn more about the element you are looking at.
 </p>
@@ -119,13 +121,12 @@
 
 <br>
 
-
 <h4>Example</h4>
-<p>Below, you see the interface you will use for the negotiation. You can see, that the participant has received an offer from RED and GREEN and has sent an offer to BLUE and GREEN. He or she might accept or decline the offer from RED or GREEN. You can also see that the participant has information about the past differences between agreed and sent amounts of other players. Participant PURPLE, for example, has once sent two units more than agreed and once the agreed amount. You can also see that the participant can only send an offer to RED because BLUE and GREEN have not responded to her/his offer yet and ORANGE and PURPLE are excluded from the negotiation because they have reached an agreement.</p>
+<p>Below, you see the interface you will use for the negotiation. You can see that the participant has received an offer from RED and GREEN and has sent an offer to BLUE and GREEN. He or she might accept or decline the offer from RED or GREEN. You can also see that the participant has information about the past differences between agreed and sent amounts of other players. Participant PURPLE, for example, has once sent two units more than agreed and once the agreed amount. You can also see that the participant can only send an offer to RED because BLUE and GREEN have not responded to her/his offer yet and ORANGE and PURPLE are excluded from the negotiation because they have reached an agreement.</p>
 
 <img src="{{static 'pictures/trading_table.svg' }}" width="900px"/>
 
-<p>In this example, the participant has accepted the offer of RED. In the next screen, (s)he will be asked to send units to RED. You see the according screen below. In this case, the participant decided to send one unit less than the agreed 12 units. In the next and in all following rounds, {{ if rs }} all five other participants {{else}} RED {{endif}} will be informed about the participant's decision to send one unit less than agreed in the present round.</p>
+<p>In this example, the participant has accepted the offer of RED. On the next screen, (s)he will be asked to send units to RED. You see the according screen below. In this case, the participant decided to send one unit less than the agreed 12 units. In the next and in all following rounds, {{ if rs }} all five other participants {{else}} RED {{endif}} will be informed about the participant's decision to send one unit less than agreed in the present round.</p>
 
 <img src="{{static 'pictures/send_units.png' }}" width="700px"/>
 
