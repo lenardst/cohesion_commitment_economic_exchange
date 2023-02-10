@@ -124,11 +124,11 @@
 <h4>Example</h4>
 <p>Below, you see the interface you will use for the negotiation. You can see that the participant has received an offer from RED and GREEN and has sent an offer to BLUE and GREEN. He or she might accept or decline the offer from RED or GREEN. You can also see that the participant has information about the past differences between agreed and sent amounts of other players. Participant PURPLE, for example, has once sent two units more than agreed and once the agreed amount. You can also see that the participant can only send an offer to RED because BLUE and GREEN have not responded to her/his offer yet and ORANGE and PURPLE are excluded from the negotiation because they have reached an agreement.</p>
 
-<img src="{{static '_static/pictures/trading_table.svg' }}" width="900px"/>
+<img src="{{static 'pictures/trading_table.svg' }}" width="900px"/>
 
 <p>In this example, the participant has accepted the offer of RED. On the next screen, (s)he will be asked to send units to RED. You see the according screen below. In this case, the participant decided to send one unit less than the agreed 12 units. In the next and in all following rounds, {{ if rs }} all five other participants {{else}} RED {{endif}} will be informed about the participant's decision to send one unit less than agreed in the present round.</p>
 
-<img src="{{static '_static/pictures/send_units.png' }}" width="700px"/>
+<img src="{{static 'pictures/send_units.png' }}" width="700px"/>
 
     {{ next_button }}
 
