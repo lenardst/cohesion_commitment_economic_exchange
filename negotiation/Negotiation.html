@@ -5,7 +5,7 @@
     Please send offers to other participants and respond to the offers of others to trade.
     </p>
 
-    <p> You have received <b>{{C.UNIT_BUDGET}} units</b> for this round. Your potential pay-off is displayed next to the offers. If you do not trade, your pay-off will be 0.20 €.
+    <p>You have received <b>{{C.UNIT_BUDGET}} units</b> to trade. Your potential pay-off is displayed next to the offers. If you do not trade, your units will be converted to a pay-off of €0.15.
     </p>
 </div>
 
@@ -22,11 +22,11 @@
     <th>List of differences between agreed and sent units <div class="tooltip" style="z-index: 4"><b>i</b>
   <span class="tooltiptext">This column shows the list of differences between agreed and sent units for the respective participant. A positive number means that a participant sent more than agreed. A negative number means that this participant sent less than agreed. The difference from the first trade is listed first and the most recent one is listed last.</span>
 </div></th>
-      <th>Offers from other participants <div class="tooltip" style="z-index: 3"><b>i</b>
+      <th>Incoming offers <div class="tooltip" style="z-index: 3"><b>i</b>
   <span class="tooltiptext">This column shows the offers you have received from other participants. You can accept or decline the offer in the right column.</span> </div></th>
-      <th>Accept/decline sent offers <div class="tooltip" style="z-index: 2"><b>i</b>
+      <th>Accept/decline incoming offers <div class="tooltip" style="z-index: 2"><b>i</b>
   <span class="tooltiptext">In this column, you can accept or decline offers from other participants. Once you accept an offer, you cannot change your trade anymore. If you agreed to a trade, all your pending offers will be closed.</span> </div></th>
-      <th>Offers to other participants <div class="tooltip" style="z-index: 1"><b>i</b>
+      <th>Outgoing offers<div class="tooltip" style="z-index: 1"><b>i</b>
   <span class="tooltiptext">This column shows the offers you have sent to other participants. If they decline the offer, it will disappear from this column, and you can send another one. If they accept the offer, you cannot change your trade anymore and all your pending offers will be closed.</span></div></th>
   </tr>
         {{ for reputation in reputation_list }}
@@ -40,16 +40,17 @@
             {{ if 0 > reputation.reputation_mean }}
             <span style="color: red">{{ reputation.reputation_mean }} less</span>
             {{ else }}
-            {{ reputation.reputation_mean }},
-            {{ endif }} </td>
+            {{ reputation.reputation_mean }}
+            {{ endif }} {{ endif }}</td>
         <td><p>{{ for deviation in reputation.reputation_list }}
             {{ if deviation > 0}}
-            <span style="color: green">{{deviation}}</span>
+            <span style="color: green">{{deviation}}</span>,
             {{else}}
             {{ if 0 > deviation }}
             <span style="color: red">{{deviation}}</span>,
             {{ else }}
             {{deviation}},
+            {{ endif }}
             {{ endif }}
             {{ endfor }}</p></td>
         <td id="received-cell-{{ reputation.player.number }}" class="received-cell"></td>

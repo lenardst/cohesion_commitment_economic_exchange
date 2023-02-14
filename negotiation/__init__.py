@@ -17,6 +17,9 @@ class C(BaseConstants):
     UNIT_BUDGET = 15
     DEVIATION = 5
     PLAYER_COLORS = ['GREEN', 'BLUE', 'ORANGE', 'PURPLE', 'RED']
+    QUESTION1 = 'If you agree to an trade that you receive 10 units, is it guaranteed that you will actually receive at least 10 units?'
+    QUESTION2 = 'If you accept an offer, another participant can still accept an offer of yours in the same round?'
+    QUESTION3 = 'Assume you agreed with another participant to send 10 units. If you now deceide to send 9 instead of 10 units, how many other participants will learn about your decision?'
 pass
 
 
@@ -41,10 +44,10 @@ class Player(BasePlayer):
         [2, 'I could not trade with the preferred participant(s).'],
         [3, 'I ran out of time.'],
         [4, 'I was inattentive.']], initial=0, label='Why did you not agree on a trade in the past negotiation?')
-    quiz1 = models.BooleanField(label='If you agree to an trade that you receive 10 units, is it guaranteed that you will actually receive at least 10 units?', choices=[[True, 'Yes'], [False, 'No']])
-    quiz2 = models.BooleanField(label='If you accept an offer, another participant can still accept an offer of yours in the same round.', choices=[[True, 'Yes'], [False, 'No']])
-    quiz3 = models.IntegerField(label='Assume you agreed with another participant to send 10 units. If you now deceide to send 9 instead of 10 units, how many other participants will learn about your decision?')
-    exchange_numer = models.IntegerField()
+    quiz1 = models.BooleanField(label=C.QUESTION1, choices=[[True, 'Yes'], [False, 'No']])
+    quiz2 = models.BooleanField(label=C.QUESTION2, choices=[[True, 'Yes'], [False, 'No']])
+    quiz3 = models.IntegerField(label=C.QUESTION3)
+    exchange_number = models.IntegerField()
 
     pass
 
@@ -270,7 +273,7 @@ class Deviation(Page):
     def js_vars(player):
         return dict(
             slider_min=max(player.send - C.DEVIATION, 0),
-            slider_max=min(player.send + C.DEVIATION),
+            slider_max=player.send + C.DEVIATION,
             slider_middle=player.send,
             pay_traded_unit=C.PAY_TRADED_UNIT,
             pay_budget_unit=C.PAY_BUDGET_UNIT
@@ -280,7 +283,7 @@ class Deviation(Page):
         return dict(
             exchange_partner=player.participant.player_colors[player.participant.player_order.index(player.exchange_partner)],
             slider_min=max(player.send - C.DEVIATION, 0),
-            slider_max=min(player.send + C.DEVIATION),
+            slider_max=player.send + C.DEVIATION,
             slider_middle=player.send
         )
 
