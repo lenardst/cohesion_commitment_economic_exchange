@@ -11,8 +11,4 @@ class Instruction(Page):
     pass
 
 
-class Payment(Page):
-    pass
-
-
-page_sequence = [Instruction, Payment]
+page_sequence = [Instruction]

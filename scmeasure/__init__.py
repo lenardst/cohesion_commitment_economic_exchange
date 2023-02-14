@@ -30,6 +30,8 @@ class Player(BasePlayer):
     gift6 = models.CurrencyField(initial=0, min=0, max=10)
     gift_remaining = models.CurrencyField(initial=0)
     gift_received = models.CurrencyField(initial=0)
+    player_to_gift = models.IntegerField()
+    player_send_gift = models.IntegerField()
 
     close1 = models.IntegerField(widget=widgets.RadioSelectHorizontal,
                                  choices=[[0, 'very distant'], [1, 'distant'], [2, 'rather distant'],
@@ -185,6 +187,7 @@ class Player(BasePlayer):
      [27, 'English Language and Literature Studies [Britain/America]'],
      [28, 'Environmental Sciences'],
      [29, 'Facility Management HBO [higher vocational]'],
+     [75, 'Finance']
      [30, 'Financial Services Management HBO [higher vocational]'],
      [31, 'General social sciences'],
      [32, 'Geography'],
@@ -228,7 +231,8 @@ class Player(BasePlayer):
      [70, 'Public Administration'],
      [71, 'Roman Languages and Literature Studies'],
      [72, 'Slavic Languages and Literature'],
-     [73, 'None of the above']])
+     [73, 'Sociology'],
+     [74, 'None of the above']])
     feedback = models.LongStringField()
     pass
 
@@ -239,6 +243,19 @@ class Player(BasePlayer):
 class ResultsWaitPage(WaitPage):
     body_text = "Please wait until the other participants have sent their gifts and completed the survey."
 
+    def after_all_players_arrive(group: Group):
+        set_players = range(1, 7)
+        for p in group.get_players():
+            p.player_to_gift = random.choice(set_players.copy().remove(p.id_in_group))
+            set_players.remove(p.player_to_gift)
+            player_gift = [p.gift1, p.gift2, p.gift3, p.gift4, p.gift5, p.gift6][
+                p.player_to_gift - 1]
+            p.gift_remaining = C.GIFT - player_gift
+            p.payoff += p.gift_remaining
+            other = p.group.get_player_by_id(p.player_to_gift)
+            other.player_send_gift = p.id_in_group
+            other.gift_received += player_gift * C.GIFT_FACTOR
+            other.payoff += other.gift_received
     pass
 
 
@@ -259,17 +276,6 @@ class GiftGiving(Page):
         return dict(
             other_players=[p.id_in_group for p in player.get_others_in_subsession()]
         )
-
-    def before_next_page(player: Player, timeout_happened):
-        player_to_gift = random.choice(player.participant.player_order)
-        player_gift = [player.gift1, player.gift2, player.gift3, player.gift4, player.gift5, player.gift6][
-            player_to_gift - 1]
-        player.gift_remaining = C.GIFT - player_gift
-        player.payoff += player.gift_remaining
-        other = player.group.get_player_by_id(player_to_gift)
-        other.gift_received += player_gift * C.GIFT_FACTOR
-        other.payoff += other.gift_received
-
     pass
 
 
@@ -325,6 +331,9 @@ class Results(Page):
             gift_remaining=player.gift_remaining,
             gift_received=player.gift_received,
             total=player.participant.payoff,
+            player_to_gift=player.participant.player_colors[player.participant.player_order.index(player.player_to_gift)],
+            gift=C.GIFT-player.gift_remaining,
+            player_send_gift=player.participant.player_colors[player.participant.player_order.index(player.player_send_gift)],
         )
 
     pass

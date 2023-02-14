@@ -1,12 +1,13 @@
 {{ block title }}Negotiation{{ endblock }}
 {{ block content }}
-
+<div id="instruction">
     <p>
     Please send offers to other participants and respond to the offers of others to trade.
     </p>
 
     <p> You have received <b>{{C.UNIT_BUDGET}} units</b> for this round. Your potential pay-off is displayed next to the offers. If you do not trade, your pay-off will be 0.20 €.
     </p>
+</div>
 
     <div id="reputation">
         <table id="reputation_table">
@@ -30,8 +31,9 @@
   </tr>
         {{ for reputation in reputation_list }}
     <tr>
-        <td>Participant <b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></td>
-        <td><button type="button" id="select-button{{ reputation.player.number }}" class="select-button" onclick="selectRecipient({{ reputation.player.number }})" disabled>Select participant <b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></button></td>
+        <td>{{if reputation.player.number != 0 }} Participant {{ endif }}<b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></td>
+        <td>{{if reputation.player.number != 0 }}<button type="button" id="select-button{{ reputation.player.number }}" class="select-button" onclick="selectRecipient({{ reputation.player.number }})" disabled>Select <br>
+            <b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></button> {{ endif }}</td>
         <td>{{ reputation.reputation_mean }} </td>
         <td>{{ reputation.reputation_list }}</td>
         <td id="received-cell-{{ reputation.player.number }}" class="received-cell"></td>
@@ -52,11 +54,12 @@
         <input type="hidden" name="recipient" id="recipient" min="1" max="6">
         <table id="slider_table">
             <tr>
-                        <td style='border:none;' class="quant-cell-left">You receive: <br><span id="left">10 (Your pay-off: 0.30 €)</span></td>
-                        <td style='border:none;' class="quant-cell-right">The other receives: <br><span id="right">10 (Other's pay-off: 0.30 €)</span></td>
+                        <td style='border:none;' class="quant-cell-left">You receive: <br><span id="left">10 (Your pay-off: €0.30)</span></td>
+                        <td style='border:none;' class="quant-cell-right">The other receives: <br><span id="right">10 (Other's pay-off: €0.30)</span></td>
             </tr>
             <tr>
-                        <td style='border:none;' colspan="2" id="slider-cell"><input type="range" id="offer" class="offer-slider" name="slider" min="0" max="20" value="10" step="1"></td>
+                <td style='border:none;' id="slider-recieve-cell">You receive:<br><input type="range" id="offer-receive" class="offer-slider" name="slider" min="0" max="{{C.UNIT_BUDGET}}" value="0" step="1"></td>
+                <td style='border:none;' id="slider-send-cell"> The other receives:<br><input type="range" id="offer-send" class="offer-slider" name="slider" min="0" max="{{C.UNIT_BUDGET}}" value="0" step="1"></td>
             </tr>
                 </table>
         <input type="button" value="Send offer" id="button_send" disabled>
@@ -79,9 +82,9 @@
 
     function sendOffer(event) {
         let recipient = document.getElementById('recipient').value;
-        let offer = document.getElementById('offer').value;
-        let demand = 20 - offer;
-        liveSend(['O',recipient, offer, demand]); // O for create offer
+        let offer = document.getElementById('offer-send').value;
+        let demand = document.getElementById('offer-receive').value;
+        liveSend(['O', recipient, offer, demand]); // O for create offer
     }
 
     function liveRecv(data) { // First list item of data is the type of action
@@ -106,8 +109,8 @@
         }
         for (i = 0; offer_list.length > i; i++){
             cell_offer = document.getElementById('sent-cell-' + offer_list[i][1]);
-            var pay_off = js_vars.pay_traded_unit * offer_list[i][3] + js_vars.pay_budget_unit * offer_list[i][3];
-            var pay_off_partner = js_vars.pay_traded_unit * offer_list[i][2] + js_vars.pay_budget_unit * offer_list[i][2];
+            var pay_off = js_vars.pay_traded_unit * offer_list[i][3] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][2]);
+            var pay_off_partner = js_vars.pay_traded_unit * offer_list[i][2] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][3]);
             cell_offer.innerHTML = 'You receive ' + offer_list[i][3] + ' (' + pay_off.toFixed(2) + '€)' + ', the other receives ' + offer_list[i][2] + ' (' + pay_off_partner.toFixed(2) + '€)';
         }
     }
@@ -123,9 +126,9 @@
         for (i=0; offer_list.length > i; i++) {
             cell_offer = document.getElementById('received-cell-' + offer_list[i][1]);
             cell_accept_decline = document.getElementById('feedback-cell-' + offer_list[i][1]);
-            var pay_off = js_vars.pay_traded_unit * offer_list[i][2] + js_vars.pay_budget_unit * offer_list[i][2];
-            var pay_off_partner = js_vars.pay_traded_unit * offer_list[i][3] + js_vars.pay_budget_unit * offer_list[i][3];
-            cell_offer.innerHTML = 'You receive ' + offer_list[i][2] + ' (' + pay_off.toFixed(2) + '€)' + ', the other receives ' + offer_list[i][3] + ' (' + pay_off_partner.toFixed(2) + '€)';
+            var pay_off = js_vars.pay_traded_unit * offer_list[i][3] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][2]);
+            var pay_off_partner = js_vars.pay_traded_unit * offer_list[i][2] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][3]);
+            cell_offer.innerHTML = 'You receive ' + offer_list[i][2] + ' (€' + pay_off.toFixed(2) + ')' + ', the other receives ' + offer_list[i][3] + ' (€' + pay_off_partner.toFixed(2) + ')';
             cell_accept_decline.innerHTML = '<button type="button" id="accept_' + offer_list[i][0] + '" onclick="acceptOffer(' + offer_list[i][0] + ')">Accept</button><br><button type="button" id="decline_' + offer_list[i][0] + '" onclick="declineOffer(' + offer_list[i][0] + ')">Decline</button>';
         }
     }
@@ -163,18 +166,20 @@
     function displayExchange(partner, send, receive){
         document.getElementById('reputation').style.display = 'none';
         document.getElementById('negotiation').style.display = 'none';
-        document.getElementById('display-exchange').innerHTML = 'You have agreed with participant <b style="color:' + player_colors[player_order.indexOf(partner)]+ '">' + player_colors[player_order.indexOf(partner)] + '</b> to send ' + send + ' units and to receive ' + receive
+        document.getElementById('instruction').style.display = 'none';
+        document.getElementById('display-exchange').innerHTML = '<b>Confirmation:</b> You have agreed with participant <b style="color:' + player_colors[player_order.indexOf(partner)]+ '">' + player_colors[player_order.indexOf(partner)] + '</b> to send ' + send + ' units and to receive ' + receive
 + ' units.';
     }
 
-    document.getElementById('offer').addEventListener('input', changeDemand)
+    document.getElementById('offer-send').addEventListener('input', changeDemand)
+    document.getElementById('offer-receive').addEventListener('input', changeDemand)
     function changeDemand(){
-        var demand = document.getElementById('offer').value;
-        var offer = 20 - demand;
-        var pay_off = js_vars.pay_traded_unit * demand + js_vars.pay_budget_unit * demand;
-        var pay_off_partner = js_vars.pay_traded_unit * offer + js_vars.pay_budget_unit * offer;
-        document.getElementById('right').innerHTML = offer + ' (Other\'s pay-off: ' + pay_off_partner.toFixed(2) + ' €)';
-        document.getElementById('left').innerHTML = demand + ' (Your pay-off: ' + pay_off.toFixed(2) + ' €)';
+        var demand = document.getElementById('offer-receive').value;
+        var offer = document.getElementById('offer-send').value;
+        var pay_off = js_vars.pay_traded_unit * demand + js_vars.pay_budget_unit * (js_vars.unit_budget - offer);
+        var pay_off_partner = js_vars.pay_traded_unit * offer + js_vars.pay_budget_unit * (js_vars.unit_budget - demand);
+        document.getElementById('right').innerHTML = offer + ' (Other\'s pay-off: €' + pay_off_partner.toFixed(2) + ')';
+        document.getElementById('left').innerHTML = demand + ' (Your pay-off: €' + pay_off.toFixed(2) + ')';
     }
 
     function selectRecipient(number) {
@@ -215,7 +220,7 @@
 }
 
 .offer-slider {
-  width: 400px;
+  width: 300px;
 }
 
 #button_send {
@@ -228,7 +233,7 @@
 }
 
 .width200 {
-    width: 250px;
+    width: 200px;
 }
 
   .otree-timer.alert.alert-warning {

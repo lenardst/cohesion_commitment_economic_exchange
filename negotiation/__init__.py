@@ -14,7 +14,7 @@ class C(BaseConstants):
     NUM_ROUNDS = 5  # numpy.random.binomial(10, 0.5) + 20
     PAY_TRADED_UNIT = cu(0.03)
     PAY_BUDGET_UNIT = cu(0.01)
-    UNIT_BUDGET = 20
+    UNIT_BUDGET = 15
     DEVIATION = 5
     PLAYER_COLORS = ['GREEN', 'BLUE', 'ORANGE', 'PURPLE', 'RED']
 pass
@@ -100,6 +100,7 @@ class Quiz(Page):
     def is_displayed(player: Player):
         return player.round_number == 1
 
+
 class Answers(Page):
     @staticmethod
     def is_displayed(player: Player):
@@ -117,16 +118,18 @@ class Negotiation(Page):
     # form_fields = ['exchange_partner', 'send', 'receive']
     timer_text = 'Time left to negotiate:'
 
-    @staticmethod
-    def get_timeout_seconds(player):
-        if player.round_number == 1:
-            return 300
-        else:
-            return 180
+    #@staticmethod
+    #def get_timeout_seconds(player):
+    #    if player.round_number == 1:
+    #        return 300
+    #    else:
+    #        return 120
 
     @staticmethod
     def vars_for_template(player: Player):
         reputation_list = []
+        own_deviations = [i.field_maybe_none('deviation') for i in player.in_previous_rounds()]
+        reputation_list.append(Reputation(DisplayPlayer(0, 'YOU'), own_deviations))
         for i in range(5):
             deviations = [i.field_maybe_none('deviation') for i in player.group.get_player_by_id(player.participant.player_order[i]).in_previous_rounds() if
                           player.session.config['rs'] or i.field_maybe_none('exchange_partner') is player.id_in_group]
@@ -134,7 +137,7 @@ class Negotiation(Page):
         return dict(
             reputation_list=reputation_list,
             pay_traded_unit=C.PAY_TRADED_UNIT,
-            pay_budget_unit=C.PAY_BUDGET_UNIT
+            pay_budget_unit=C.PAY_BUDGET_UNIT,
         )
 
     @staticmethod
@@ -143,7 +146,8 @@ class Negotiation(Page):
             pay_traded_unit=C.PAY_TRADED_UNIT,
             pay_budget_unit=C.PAY_BUDGET_UNIT,
             player_colors=player.participant.player_colors,
-            player_order=player.participant.player_order
+            player_order=player.participant.player_order,
+            unit_budget=C.UNIT_BUDGET
         )
 
     @staticmethod
@@ -197,7 +201,7 @@ class Negotiation(Page):
                         closing_offers = [o for o in Offer.filter(group=player.group) if
                                           (o.receiver == offer.receiver or
                                            o.receiver == offer.sender or o.sender == offer.sender or o.sender == offer.receiver)
-                                          and o.closed == False]
+                                          and o.closed==False]
                         for o in closing_offers:
                             o.closed = True
                         other_players = [p for p in offer.receiver.get_others_in_group() if
@@ -258,7 +262,7 @@ class Deviation(Page):
     def js_vars(player):
         return dict(
             slider_min=max(player.send - C.DEVIATION, 0),
-            slider_max=min(player.send + C.DEVIATION, C.UNIT_BUDGET),
+            slider_max=min(player.send + C.DEVIATION),
             slider_middle=player.send,
             pay_traded_unit=C.PAY_TRADED_UNIT,
             pay_budget_unit=C.PAY_BUDGET_UNIT
@@ -266,7 +270,10 @@ class Deviation(Page):
 
     def vars_for_template(player: Player):
         return dict(
-            exchange_partner=player.participant.player_colors[player.participant.player_order.index(player.exchange_partner)]
+            exchange_partner=player.participant.player_colors[player.participant.player_order.index(player.exchange_partner)],
+            slider_min=max(player.send - C.DEVIATION, 0),
+            slider_max=min(player.send + C.DEVIATION),
+            slider_middle=player.send
         )
 
     pass

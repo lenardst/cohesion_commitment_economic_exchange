@@ -7,6 +7,38 @@
 
 <hr>
 {{ for p in other_players }}
+
+ {{ if p.number not in exchange_partners }}
+
+<p> You did not trade with participant <b style="color:{{p.label}}">{{p.label}}</b>.</p>
+
+{{else}}
+
+<p> You may remind yourself of your trade history with participant <b style="color:{{p.label}}">{{ p.label }}</b> this table:</p>
+
+        <table class="reputation_table">
+  <tr>
+    <th>Round</th>
+      <th>Trade with participant</th>
+    <th>Agreed units (send)</th>
+    <th>Sent units</th>
+      <th>Agreed units (receive)</th>
+    <th>Received units</th>
+  </tr>
+        {{ for exchange in participant.exchange_list }}
+            {{if exchange.partner.number == p.number }}
+    <tr>
+        <td>{{ exchange.round }} </td>
+        <td><b style="color:{{exchange.partner.label}}">{{ exchange.partner.label }}</b></td>
+        <td>{{ exchange.amount_agreed_sent }} </td>
+        <td>{{ exchange.amount_sent }} </td>
+        <td>{{ exchange.amount_agreed_receive }} </td>
+        <td>{{ exchange.amount_received }}</td>
+    </tr>
+            {{endif}}
+        {{ endfor }}
+            </table>
+            {{endif}}
     <p> How would you describe your relationship to participant <b style="color:{{p.label}}">{{p.label}}</b> on each of the following?</p>
 <table class="table">
         <tbody><tr>
@@ -96,38 +128,6 @@
                 <td><label for="id_harmonious{{p.number}}-6">very conflictual</label> <input class="form-check-input" type="radio" id="id_harmonious{{p.number}}-6" name="harmonious{{p.number}}" required="" value="6"></td>
         </tr>
 </tbody></table>
-
- {{ if p.number not in exchange_partners }}
-
-<p> You did not trade with participant <b style="color:{{p.label}}">{{p.label}}</b>.</p>
-
-{{else}}
-
-<p> You may remind yourself of your trade history with participant <b style="color:{{p.label}}">{{ p.label }}</b> this table:</p>
-
-        <table class="reputation_table">
-  <tr>
-    <th>Round</th>
-      <th>Trade with participant</th>
-    <th>Agreed units (send)</th>
-    <th>Sent units</th>
-      <th>Agreed units (receive)</th>
-    <th>Received units</th>
-  </tr>
-        {{ for exchange in participant.exchange_list }}
-            {{if exchange.partner.number == p.number }}
-    <tr>
-        <td>{{ exchange.round }} </td>
-        <td><b style="color:{{exchange.partner.label}}">{{ exchange.partner.label }}</b></td>
-        <td>{{ exchange.amount_agreed_sent }} </td>
-        <td>{{ exchange.amount_sent }} </td>
-        <td>{{ exchange.amount_agreed_receive }} </td>
-        <td>{{ exchange.amount_received }}</td>
-    </tr>
-            {{endif}}
-        {{ endfor }}
-            </table>
-            {{endif}}
 <hr>
     {{ endfor }}
 
