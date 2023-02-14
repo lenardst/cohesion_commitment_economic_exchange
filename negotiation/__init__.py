@@ -25,6 +25,7 @@ class Subsession(BaseSubsession):
 
 
 class Group(BaseGroup):
+    number_exchanges = models.IntegerField(initial=0)
     pass
 
 
@@ -35,15 +36,15 @@ class Player(BasePlayer):
     receive = models.IntegerField()
     deviation = models.IntegerField(min=-C.DEVIATION, max=C.DEVIATION)
     deviation_partner = models.IntegerField()
-    round_net = models.IntegerField()
     reason_no_exchange = models.IntegerField(choices=[
         [1, 'I did not want to trade'],
         [2, 'I could not trade with the preferred participant(s).'],
         [3, 'I ran out of time.'],
         [4, 'I was inattentive.']], initial=0, label='Why did you not agree on a trade in the past negotiation?')
-    quiz1 = models.BooleanField(label='If you agree to an exchange that you receive 10 units, is it garunteed that you will actually receive at least 10 units?', choices=[[True, 'True'], [False, 'False']])
-    quiz2 = models.BooleanField(label='If you accept an offer, another participant can still accept an offer of yours in the same round.', choices=[[True, 'True'], [False, 'False']])
-    quiz3 = models.IntegerField(label='If you send one unit less than agreed to another participant, how many participants will learn about your decision?')
+    quiz1 = models.BooleanField(label='If you agree to an trade that you receive 10 units, is it guaranteed that you will actually receive at least 10 units?', choices=[[True, 'Yes'], [False, 'No']])
+    quiz2 = models.BooleanField(label='If you accept an offer, another participant can still accept an offer of yours in the same round.', choices=[[True, 'Yes'], [False, 'No']])
+    quiz3 = models.IntegerField(label='Assume you agreed with another participant to send 10 units. If you now deceide to send 9 instead of 10 units, how many other participants will learn about your decision?')
+    exchange_numer = models.IntegerField()
 
     pass
 
@@ -66,7 +67,7 @@ class Offer(ExtraModel):
 # PAGES
 
 class FirstWaitPage(WaitPage):
-    body_text = "Please wait until the other participants in your session have arrived."
+    body_text = "Please wait until the other participants in your session have arrived and signed the consent form."
 
     def is_displayed(player: Player):
         return player.round_number == 1
@@ -197,6 +198,9 @@ class Negotiation(Page):
                         offer.receiver.receive = offer.offer
                         offer.receiver.exchange_partner = offer.sender.id_in_group
                         offer.sender.exchange_partner = offer.receiver.id_in_group
+                        player.group.number_exchanges += 1
+                        offer.sender.exchange_number = player.group.number_exchanges
+                        offer.receiver.exchange_number = player.group.number_exchanges
                         # Close all offers where exchange partners are involved
                         closing_offers = [o for o in Offer.filter(group=player.group) if
                                           (o.receiver == offer.receiver or
@@ -243,10 +247,14 @@ class Negotiation(Page):
 
 
 class WaitForInstructions(WaitPage):
-    body_text = "Please wait until the other participants have read the instructions."
+    body_text = "Please wait until the other participants have read the instructions, and answered the questions."
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.round_number == 1
 
 
 class WaitForExchange(WaitPage):
+    body_text = "Please wait until the other participants are ready for the next round."
     pass
 
 
@@ -298,9 +306,9 @@ class WaitAfterExchange(WaitPage):
             if p.agreed:
                 p.deviation_partner = p.group.get_player_by_id(p.exchange_partner).deviation
                 p.payoff = (p.receive + p.deviation_partner) * C.PAY_TRADED_UNIT + (
-                            C.UNIT_BUDGET - p.send - p.deviation) * C.PAY_BUDGET_UNIT
+                            C.UNIT_BUDGET + C.DEVIATION - p.send - p.deviation) * C.PAY_BUDGET_UNIT
             else:
-                p.payoff = C.UNIT_BUDGET * C.PAY_BUDGET_UNIT
+                p.payoff = (C.UNIT_BUDGET + C.DEVIATION) * C.PAY_BUDGET_UNIT
 
     pass
 
@@ -323,8 +331,8 @@ class Result(Page):
             return dict(
                 net_receive=player.receive + player.deviation_partner,
                 points_form_partner=(player.receive + player.deviation_partner) * C.PAY_TRADED_UNIT,
-                remaining_budget=C.UNIT_BUDGET - player.send - player.deviation,
-                remaining_budget_pay=(C.UNIT_BUDGET - player.send - player.deviation) * C.PAY_BUDGET_UNIT,
+                remaining_budget=C.UNIT_BUDGET + C.DEVIATION - player.send - player.deviation,
+                remaining_budget_pay=(C.UNIT_BUDGET + C.DEVIATION - player.send - player.deviation) * C.PAY_BUDGET_UNIT,
                 abs_deviation_partner=abs(player.deviation_partner),
                 exchange_partner=player.participant.player_colors[player.participant.player_order.index(player.exchange_partner)]
             )
@@ -337,5 +345,5 @@ class Result(Page):
     pass
 
 
-page_sequence = [FirstWaitPage, Game_Instruction, Quiz, Answers, WaitForInstructions, Negotiation, WaitForExchange, Deviation,
+page_sequence = [FirstWaitPage, Game_Instruction, Quiz, Answers, WaitForInstructions, WaitForExchange, Negotiation, Deviation,
                  NoExchangePage, WaitAfterExchange, Result]

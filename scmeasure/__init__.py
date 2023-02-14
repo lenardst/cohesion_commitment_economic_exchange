@@ -28,6 +28,7 @@ class Player(BasePlayer):
     gift4 = models.CurrencyField(initial=0, min=0, max=10)
     gift5 = models.CurrencyField(initial=0, min=0, max=10)
     gift6 = models.CurrencyField(initial=0, min=0, max=10)
+    trading_earnings = models.CurrencyField(initial=0)
     gift_remaining = models.CurrencyField(initial=0)
     gift_received = models.CurrencyField(initial=0)
     player_to_gift = models.IntegerField()
@@ -158,82 +159,7 @@ class Player(BasePlayer):
     age = models.IntegerField(label='Please enter your age.')
     sex = models.IntegerField(label='Please chose the gender you identify with.',
                               choices=[[0, 'female'], [1, 'male'], [2, 'Else or prefer not to say.']])
-    major = models.IntegerField(label='Please chose your main field of studies or the one that is closest.', choices=
-    [[2, 'Accountancy'],
-     [3, 'Accountancy HBO [higher vocational]'],
-     [4, 'Anthropology'],
-     [5, 'Archaeology'],
-     [6, 'Art and Economics HBO [higher vocational]'],
-     [7, 'Arts'],
-     [8, 'Astronomics'],
-     [9, 'Biochemistry'],
-     [10, 'Bioinformatics'],
-     [11, 'Biology'],
-     [12, 'Business Administration'],
-     [13, 'Chemistry'],
-     [14, 'Cognitive Artificial Intelligence'],
-     [15, 'Commercial Economy HBO [higher vocational]'],
-     [16, 'Commercial Information Technology'],
-     [17, 'Communication [&amp; Media Design] HBO [higher vocational]'],
-     [18, 'Communication Management HBO [higher vocational]'],
-     [19, 'Communication science'],
-     [20, 'Computer Science'],
-     [21, 'Dentistry'],
-     [22, 'Dutch Language and Culture'],
-     [23, 'Economic mathematics'],
-     [24, 'Economics'],
-     [25, 'Educational science'],
-     [26, 'Engineering'],
-     [27, 'English Language and Literature Studies [Britain/America]'],
-     [28, 'Environmental Sciences'],
-     [29, 'Facility Management HBO [higher vocational]'],
-     [75, 'Finance']
-     [30, 'Financial Services Management HBO [higher vocational]'],
-     [31, 'General social sciences'],
-     [32, 'Geography'],
-     [33, 'Geology'],
-     [34, 'German Language and Literature Studies'],
-     [35, 'Health Sciences'],
-     [36, 'History'],
-     [37, 'History of art'],
-     [38, 'Humanistics'],
-     [39, 'Indogerman Languages'],
-     [40, 'Integral Safety HBO [higher vocational]'],
-     [41, 'International Communication and Media HBO [higher vocational]'],
-     [42, 'International Marketing Management HBO [higher vocational]'],
-     [43, 'Journalism HBO [higher vocational]'],
-     [44, 'Language and Culture studies'],
-     [45, 'Law'],
-     [46, 'Law HBO [higher vocational]'],
-     [47, 'Mathematics'],
-     [48, 'Media Management HBO [higher vocational]'],
-     [49, 'Media science'],
-     [50, 'Medical technology'],
-     [51, 'Medicine'],
-     [52, 'Musicology'],
-     [53, 'Nature science and innovation management'],
-     [54, 'Neuroscience'],
-     [55, 'Nutrition science'],
-     [56, 'Optometry HBO [higher vocational]'],
-     [57, 'Orthoptics HBO [higher vocational]'],
-     [58, 'PABO HBO [higher vocational]'],
-     [59, 'Pedagogics'],
-     [60, 'Personnel and Labour HBO [higher vocational]'],
-     [61, 'Pharmaceutics'],
-     [62, 'Philology'],
-     [63, 'Philosophy'],
-     [64, 'Physics'],
-     [65, 'Physiotherapy HBO [higher vocational]'],
-     [66, 'Policy and management studies'],
-     [67, 'Political Science'],
-     [68, 'Prehistory and early history'],
-     [69, 'Psychology'],
-     [70, 'Public Administration'],
-     [71, 'Roman Languages and Literature Studies'],
-     [72, 'Slavic Languages and Literature'],
-     [73, 'Sociology'],
-     [74, 'None of the above']])
-    feedback = models.LongStringField()
+    major = models.StringField(label='Please enter your main field of studies.')
     pass
 
 
@@ -241,11 +167,12 @@ class Player(BasePlayer):
 
 
 class ResultsWaitPage(WaitPage):
-    body_text = "Please wait until the other participants have sent their gifts and completed the survey."
+    body_text = "Please wait until the other participants have sent their gifts."
 
     def after_all_players_arrive(group: Group):
         set_players = range(1, 7)
         for p in group.get_players():
+            p.trading_earnings = p.participant.payoff
             p.player_to_gift = random.choice(set_players.copy().remove(p.id_in_group))
             set_players.remove(p.player_to_gift)
             player_gift = [p.gift1, p.gift2, p.gift3, p.gift4, p.gift5, p.gift6][
@@ -256,7 +183,11 @@ class ResultsWaitPage(WaitPage):
             other.player_send_gift = p.id_in_group
             other.gift_received += player_gift * C.GIFT_FACTOR
             other.payoff += other.gift_received
+
+    def before_next_page(player: Player, timeout_happened):
+        player.participant.payoff = round(player.participant.payoff * 2) / 2
     pass
+
 
 
 class GiftGiving(Page):
@@ -322,12 +253,9 @@ class Demographics(Page):
 
 
 class Results(Page):
-    def before_next_page(player: Player, timeout_happened):
-        player.payoff = round(player.payoff * 2) / 2
-
     def vars_for_template(player: Player):
         return dict(
-            trade_earnings=player.participant.payoff - player.gift_remaining - player.gift_received,
+            trade_earnings=player.trading_earnings,
             gift_remaining=player.gift_remaining,
             gift_received=player.gift_received,
             total=player.participant.payoff,
@@ -335,13 +263,7 @@ class Results(Page):
             gift=C.GIFT-player.gift_remaining,
             player_send_gift=player.participant.player_colors[player.participant.player_order.index(player.player_send_gift)],
         )
-
     pass
 
 
-class Feedback(Page):
-    form_model = 'player'
-    form_fields = ['feedback']
-
-
-page_sequence = [GiftGiving, Questionaire, Demographics, ResultsWaitPage, Results, Feedback]
+page_sequence = [GiftGiving, ResultsWaitPage, Questionaire, Demographics, Results]

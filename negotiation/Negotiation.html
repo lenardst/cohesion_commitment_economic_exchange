@@ -14,7 +14,7 @@
   <tr>
     <th>Participant</th>
       <th>Select for Offer <div class="tooltip" style="z-index: 6"><b>i</b>
-  <span class="tooltiptext">Use the buttons to select a participant you want to send an offer to. Next, chose an amount and send the offer below the table.</span>
+  <span class="tooltiptext">Use the buttons to select a participant you want to send an offer to. Next, choose an amount and send the offer below the table.</span>
 </div></th>
     <th>Average difference between agreed and sent units <div class="tooltip" style="z-index: 5"><b>i</b>
   <span class="tooltiptext">This column shows the average difference between agreed and sent units for the respective participant. A positive number means that a participant has sent more than agreed in the past. A negative number means that a participant has sent less than agreed in the past.</span>
@@ -34,8 +34,24 @@
         <td>{{if reputation.player.number != 0 }} Participant {{ endif }}<b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></td>
         <td>{{if reputation.player.number != 0 }}<button type="button" id="select-button{{ reputation.player.number }}" class="select-button" onclick="selectRecipient({{ reputation.player.number }})" disabled>Select <br>
             <b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></button> {{ endif }}</td>
-        <td>{{ reputation.reputation_mean }} </td>
-        <td>{{ reputation.reputation_list }}</td>
+        <td>{{ if reputation.reputation_mean > 0}}
+            <span style="color: green">{{ reputation.reputation_mean }} more</span>
+            {{else}}
+            {{ if 0 > reputation.reputation_mean }}
+            <span style="color: red">{{ reputation.reputation_mean }} less</span>
+            {{ else }}
+            {{ reputation.reputation_mean }},
+            {{ endif }} </td>
+        <td><p>{{ for deviation in reputation.reputation_list }}
+            {{ if deviation > 0}}
+            <span style="color: green">{{deviation}}</span>
+            {{else}}
+            {{ if 0 > deviation }}
+            <span style="color: red">{{deviation}}</span>,
+            {{ else }}
+            {{deviation}},
+            {{ endif }}
+            {{ endfor }}</p></td>
         <td id="received-cell-{{ reputation.player.number }}" class="received-cell"></td>
         <td id="feedback-cell-{{ reputation.player.number }}" class="feedback-cell"></td>
         <td id="sent-cell-{{ reputation.player.number }}" class="sent-cell"></td>
@@ -158,7 +174,7 @@
             document.getElementById('display-recipient').innerHTML = "Please select a participant from the table above.";
         } else if (!player_list.includes(document.getElementById('recipient').value)){
             document.getElementById('recipient').value = "";
-            document.getElementById('display-recipient').innerHTML = "Please select another participant.";
+            document.getElementById('display-recipient').innerHTML = "Please select another participant if you want to send another offer.";
             document.getElementById('button_send').disabled = true;
         }
     }
