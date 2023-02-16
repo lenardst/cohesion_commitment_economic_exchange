@@ -1,8 +1,8 @@
-{{ block title }}Sending Units{{ endblock }}
+{{ block title }}Sending Units {{if player.round_number == 1 }}(Practice Round){{endif}}{{ endblock }}
 {{ block content }}
 
     <p>
-    You have received another 5 units. You have agreed to send {{player.send}} units to participant <b style="color:{{exchange_partner}}">{{exchange_partner}}</b>. You may send up to {{C.DEVIATION}} units more or less than agreed on.
+    You have received another <b>{{C.DEVIATION}} units</b>. You now have 20 units in total. You have agreed to send {{player.send}} units to participant <b style="color:{{exchange_partner}}">{{exchange_partner}}</b>. You may send up to {{C.DEVIATION}} units more or less than agreed upon. Each unit you do not send will be converted into a pay-off of €0.01 per unit.
     </p>
     {{ form.deviation }}
 

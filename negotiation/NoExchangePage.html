@@ -1,9 +1,9 @@
 {{ block title }}
-Why did you not agree to a trade in this round?
+Why did you not agree to a trade in this round? {{if player.round_number == 1 }}(Practice Round){{endif}}
 {{ endblock }}
 {{ block content }}
 
-You have received another {{C.DEVIATION}} units that will be converted into money at the end of the round.
+You have received another {{C.DEVIATION}} units that will be converted into a pay-off of €0.01 per unit at the end of the round.
 
 {{ formfields }}
 

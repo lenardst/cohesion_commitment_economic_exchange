@@ -2,7 +2,7 @@ from otree.api import *
 
 import settings
 from negotiation.reputation import DisplayPlayer
-import random
+import random, copy
 
 
 class C(BaseConstants):
@@ -170,24 +170,21 @@ class ResultsWaitPage(WaitPage):
     body_text = "Please wait until the other participants have sent their gifts."
 
     def after_all_players_arrive(group: Group):
-        set_players = range(1, 7)
         for p in group.get_players():
             p.trading_earnings = p.participant.payoff
-            p.player_to_gift = random.choice(set_players.copy().remove(p.id_in_group))
-            set_players.remove(p.player_to_gift)
+        set_players = [2, 3, 4, 5, 6, 1]
+        for p in group.get_players():
+            p.player_to_gift = set_players[p.id_in_group-1]
             player_gift = [p.gift1, p.gift2, p.gift3, p.gift4, p.gift5, p.gift6][
                 p.player_to_gift - 1]
             p.gift_remaining = C.GIFT - player_gift
-            p.payoff += p.gift_remaining
+            p.participant.payoff += p.gift_remaining
             other = p.group.get_player_by_id(p.player_to_gift)
             other.player_send_gift = p.id_in_group
             other.gift_received += player_gift * C.GIFT_FACTOR
-            other.payoff += other.gift_received
-
-    def before_next_page(player: Player, timeout_happened):
-        player.participant.payoff = round(player.participant.payoff * 2) / 2
-    pass
-
+            other.participant.payoff += other.gift_received
+        for p in group.get_players():
+            p.participant.payoff = round(p.participant.payoff * 2) / 2
 
 
 class GiftGiving(Page):

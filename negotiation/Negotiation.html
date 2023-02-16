@@ -1,11 +1,11 @@
-{{ block title }}Negotiation{{ endblock }}
+{{ block title }}Negotiation {{if player.round_number == 1 }}(Practice Round){{endif}}{{ endblock }}
 {{ block content }}
 <div id="instruction">
     <p>
     Please send offers to other participants and respond to the offers of others to trade.
     </p>
 
-    <p>You have received <b>{{C.UNIT_BUDGET}} units</b> to trade. Your potential pay-off is displayed next to the offers. If you do not trade, your units will be converted to a pay-off of €0.15.
+    <p>You have received <b>{{C.UNIT_BUDGET}} units</b> to trade. Each unit you do not trade will be converted into a pay-off of €0.01 per unit.
     </p>
 </div>
 
@@ -26,7 +26,7 @@
   <span class="tooltiptext">This column shows the offers you have received from other participants. You can accept or decline the offer in the right column.</span> </div></th>
       <th>Accept/decline incoming offers <div class="tooltip" style="z-index: 2"><b>i</b>
   <span class="tooltiptext">In this column, you can accept or decline offers from other participants. Once you accept an offer, you cannot change your trade anymore. If you agreed to a trade, all your pending offers will be closed.</span> </div></th>
-      <th>Outgoing offers<div class="tooltip" style="z-index: 1"><b>i</b>
+      <th>Outgoing offers <div class="tooltip" style="z-index: 1"><b>i</b>
   <span class="tooltiptext">This column shows the offers you have sent to other participants. If they decline the offer, it will disappear from this column, and you can send another one. If they accept the offer, you cannot change your trade anymore and all your pending offers will be closed.</span></div></th>
   </tr>
         {{ for reputation in reputation_list }}
@@ -94,6 +94,9 @@
     const sent_table = document.getElementById('sent_table')
     const player_colors = js_vars.player_colors
     const player_order = js_vars.player_order
+    var amount = 0;
+    var player_selected = 0;
+
     window.onload = liveSend('R');
 
 
@@ -146,7 +149,7 @@
             var pay_off = js_vars.pay_traded_unit * offer_list[i][3] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][2]);
             var pay_off_partner = js_vars.pay_traded_unit * offer_list[i][2] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][3]);
             cell_offer.innerHTML = 'You receive ' + offer_list[i][2] + ' (€' + pay_off.toFixed(2) + ')' + ', the other receives ' + offer_list[i][3] + ' (€' + pay_off_partner.toFixed(2) + ')';
-            cell_accept_decline.innerHTML = '<button type="button" id="accept_' + offer_list[i][0] + '" onclick="acceptOffer(' + offer_list[i][0] + ')">Accept</button><br><button type="button" id="decline_' + offer_list[i][0] + '" onclick="declineOffer(' + offer_list[i][0] + ')">Decline</button>';
+            cell_accept_decline.innerHTML = '<button type="button" class="accept-button" id="accept_' + offer_list[i][0] + '" onclick="acceptOffer(' + offer_list[i][0] + ')"><b>Accept</b></button><br><button type="button" class="decline-button" id="decline_' + offer_list[i][0] + '" onclick="declineOffer(' + offer_list[i][0] + ')"><b>Decline</b></button>';
         }
     }
 
@@ -176,7 +179,8 @@
         } else if (!player_list.includes(document.getElementById('recipient').value)){
             document.getElementById('recipient').value = "";
             document.getElementById('display-recipient').innerHTML = "Please select another participant if you want to send another offer.";
-            document.getElementById('button_send').disabled = true;
+            player_selected = 0;
+            changeSendButton();
         }
     }
 
@@ -190,6 +194,7 @@
 
     document.getElementById('offer-send').addEventListener('input', changeDemand)
     document.getElementById('offer-receive').addEventListener('input', changeDemand)
+
     function changeDemand(){
         var demand = document.getElementById('offer-receive').value;
         var offer = document.getElementById('offer-send').value;
@@ -197,6 +202,16 @@
         var pay_off_partner = js_vars.pay_traded_unit * offer + js_vars.pay_budget_unit * (js_vars.unit_budget - demand);
         document.getElementById('right').innerHTML = offer + ' (Other\'s pay-off: €' + pay_off_partner.toFixed(2) + ')';
         document.getElementById('left').innerHTML = demand + ' (Your pay-off: €' + pay_off.toFixed(2) + ')';
+        amount = (offer + demand) != 0;
+        changeSendButton();
+    }
+
+    function changeSendButton(){
+        if (player_selected & amount){
+            document.getElementById('button_send').removeAttribute('disabled');
+        } else {
+            document.getElementById('button_send').disabled = true;
+        }
     }
 
     function selectRecipient(number) {
@@ -207,8 +222,9 @@
         document.getElementById('select-button' + number).classList.add('active-select-button');
         document.getElementById("recipient").value = number;
         document.getElementById("display-recipient").innerHTML = "You selected participant <b style='color:" + player_colors[player_order.indexOf(number)]+ "'>" + player_colors[player_order.indexOf(number)] + "</b>.";
-        document.getElementById('button_send').removeAttribute('disabled');
-}
+        player_selected = 1;
+        changeSendButton();
+    }
 
 
 </script>
@@ -296,7 +312,22 @@
 }
 
 .active-select-button {
-        background-color: #72b2ff;
+    background-color: #72b2ff;
+    }
+
+.select-button, .accept-button, .decline-button {
+    width: 85px;
+}
+
+.decline-button {
+    margin-top: 3px;
+    background-color: red;
+    color: white;
+}
+
+.accept-button {
+    background-color: green;
+    color: white;
 }
 
 button:disabled,
@@ -304,6 +335,8 @@ button[disabled]{
     color: black;
     opacity: .7;
 }
+
+
 
 </style>
 {{ endblock }}

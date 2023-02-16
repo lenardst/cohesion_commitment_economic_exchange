@@ -3,8 +3,10 @@
 {{ endblock }}
 {{ block content }}
 
-<p> The last round of trading is now finished. You have received another <b>{{C.GIFT}}</b>. You may now gift up to {{C.GIFT}} to each other participant. Only one of your gifts will be randomly chosen and given to the respective participant. The amount you gifted will be multiplied by three. If you gift €0.10, for example, the recipient receives €0.30, and you receive €0.90. You will keep the remaining money. In the end, you will learn how much you were gifted.<p/>
+<p> The last round of trading is now finished. You have received another <b>{{C.GIFT}}</b>. You may now gift up to {{C.GIFT}} to each other participant. Only one of your gifts will be randomly chosen and given to the respective participant. You will keep the remaining money. The amount you gifted will be multiplied by three. If you gift €0.10, for example, the recipient receives €0.30, and you receive €0.90. In the end, you will learn how much you were gifted.<p/>
 <hr>
+    {{ for p in other_players }}
+
   {{ if p.number not in exchange_partners }}
 
 <p> You did not trade with participant <b style="color:{{p.label}}">{{p.label}}</b>.</p>
@@ -35,8 +37,7 @@
         {{ endfor }}
             </table>
             {{endif}}
-
-    {{ for p in other_players }}
+<br>
     <p> Gift between €0 and €1 to participant <b style="color:{{p.label}}">{{p.label}}</b>:
     <b>€<span id="value{{p.number}}">0</span></b></p>
     <input id="gift_slider{{p.number}}" class="deviation-slider" type="range" min="0" max="1" value="0" step="0.01">
