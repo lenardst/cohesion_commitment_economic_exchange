@@ -17,7 +17,7 @@ def get_available_players(player, offers):
 
 
 def all_agreed(player):
-    exchange_agreed = [p.id_in_group for p in player.get_others_in_subsession() if not p.agreed]
+    exchange_agreed = [p.id_in_group for p in player.get_others_in_group() if not p.agreed]
     if len(exchange_agreed) == 0:
         return True
     else:

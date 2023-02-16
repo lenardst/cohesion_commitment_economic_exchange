@@ -17,7 +17,7 @@ class C(BaseConstants):
     UNIT_BUDGET = 15
     DEVIATION = 5
     PLAYER_COLORS = ['GREEN', 'BLUE', 'ORANGE', 'PURPLE', 'RED']
-    QUESTION1 = 'If you agree to a trade that you receive 10 units, is it guaranteed that you will actually receive at least 10 units?'
+    QUESTION1 = 'If you agree to a trade that you receive 10 units, is it guaranteed that you will receive at least 10 units?'
     QUESTION2 = 'If you accept an offer, another participant can still accept an offer of yours in the same round?'
     QUESTION3 = 'Assume you agreed with another participant to send 10 units. If you now decide to send 9 instead of 10 units, how many other participants will learn about your decision?'
 
@@ -90,6 +90,7 @@ class FirstWaitPage(WaitPage):
             player.color_order = str(player.participant.player_colors)
             player.player_order = str(player.participant.player_order)
         subsession.group_randomly(fixed_id_in_group=True)
+
     pass
 
 
@@ -100,7 +101,23 @@ class Game_Instruction(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
+        reputation_list = []
+        own_deviations = [[i.deviation, return_color(player, i.exchange_partner)] for i in player.in_previous_rounds()
+                          if i.round_number != 1 and i.agreed]
+        reputation_list.append(Reputation(DisplayPlayer(0, 'YOU'), own_deviations))
+        for i in range(5):
+            deviations = [[i.deviation, return_color(player, i.exchange_partner)] for i in
+                          player.group.get_player_by_id(player.participant.player_order[i]).in_previous_rounds() if
+                          i.agreed and
+                          (player.session.config['rs'] or i.field_maybe_none('exchange_partner') is player.id_in_group)
+                          and i.round_number != 1]
+            reputation_list.append(
+                Reputation(DisplayPlayer(player.participant.player_order[i], player.participant.player_colors[i]),
+                           deviations))
         return dict(
+            reputation_list=reputation_list,
+            pay_traded_unit=C.PAY_TRADED_UNIT,
+            pay_budget_unit=C.PAY_BUDGET_UNIT,
             rs=player.session.config['rs']
         )
 
@@ -113,6 +130,7 @@ class Game_Instruction(Page):
             player_order=player.participant.player_order,
             unit_budget=C.UNIT_BUDGET
         )
+
 
 class Quiz(Page):
     form_model = 'player'
@@ -140,21 +158,23 @@ class Negotiation(Page):
     # form_fields = ['exchange_partner', 'send', 'receive']
     timer_text = 'Time left to negotiate:'
 
-    # @staticmethod
-    # def get_timeout_seconds(player):
-    #    if player.round_number == 1:
-    #        return 300
-    #    else:
-    #        return 120
+    @staticmethod
+    def get_timeout_seconds(player):
+        if player.round_number == 1:
+            return 300
+        else:
+            return 120
 
     @staticmethod
     def vars_for_template(player: Player):
         reputation_list = []
-        own_deviations = [[i.deviation, return_color(player, i.exchange_partner)] for i in player.in_previous_rounds() if i.round_number != 1 and i.agreed]
+        own_deviations = [[i.deviation, return_color(player, i.exchange_partner)] for i in player.in_previous_rounds()
+                          if i.round_number != 1 and i.agreed]
         reputation_list.append(Reputation(DisplayPlayer(0, 'YOU'), own_deviations))
         for i in range(5):
             deviations = [[i.deviation, return_color(player, i.exchange_partner)] for i in
-                          player.group.get_player_by_id(player.participant.player_order[i]).in_previous_rounds() if i.agreed and
+                          player.group.get_player_by_id(player.participant.player_order[i]).in_previous_rounds() if
+                          i.agreed and
                           (player.session.config['rs'] or i.field_maybe_none('exchange_partner') is player.id_in_group)
                           and i.round_number != 1]
             reputation_list.append(
@@ -391,7 +411,7 @@ class EndPracticeRound(Page):
 
     def vars_for_template(player: Player):
         if player.agreed:
-            exchange_partner=player.participant.player_colors[
+            exchange_partner = player.participant.player_colors[
                 player.participant.player_order.index(player.exchange_partner)]
         else:
             exchange_partner = 0

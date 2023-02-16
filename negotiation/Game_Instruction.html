@@ -4,19 +4,19 @@
 {{ block content }}
 
 
-<p><b>Please read now the instructions on paper handed to you.</b></p>
+<p><b>Please now read the instructions on paper handed to you.</b></p>
 
 <h3>Interface</h3>
 <p>Below, you see the interface that you will use for the negotiation. The table displays all information about other participants and the offers you sent and received. When you select a participant, you can send an offer using the tool below the table. You may hover over the <span class="tooltip" style="z-index: 6"><b>i</b>
   <span class="tooltiptext">Hover over this icon to learn more about the element.</span>
 </span> to learn more about the element you are looking at. In the practice round, you will become familiar with the interface.
 </p>
-<div id="reputation">
+    <div id="reputation">
         <table id="reputation_table">
-  <tbody><tr>
+  <tr>
     <th>Participant</th>
       <th>Select for Offer <div class="tooltip" style="z-index: 6"><b>i</b>
-  <span class="tooltiptext">Use the buttons to select a participant you want to send an offer to. Next, choose an amount and send the offer below the table.</span>
+  <span class="tooltiptext">Use the buttons to select a participant you want to send an offer to. Next, choose an number and send the offer below the table.</span>
 </div></th>
     <th>Average difference between agreed and sent units <div class="tooltip" style="z-index: 5"><b>i</b>
   <span class="tooltiptext">This column shows the average difference between agreed and sent units for the respective participant. A positive number means that a participant has sent more than agreed in the past. A negative number means that a participant has sent less than agreed in the past.</span>
@@ -24,7 +24,7 @@
     <th>Differences between agreed and sent units <div class="tooltip" style="z-index: 4"><b>i</b>
   <span class="tooltiptext">This column shows the list of differences between agreed and sent units for the respective participant. A positive number means that a participant sent more than agreed. A negative number means that this participant sent less than agreed. The difference from the first trade is listed first and the most recent one last. The color indicates with whom the respective participant traded. If you cannot distinguish the colors, hover over the element.</span>
 </div></th>
-
+</div></th>
       <th>Incoming offers <div class="tooltip" style="z-index: 3"><b>i</b>
   <span class="tooltiptext">This column shows the offers you have received from other participants. You can accept or decline the offer in the right column.</span> </div></th>
       <th>Accept/decline incoming offers <div class="tooltip" style="z-index: 2"><b>i</b>
@@ -32,99 +32,37 @@
       <th>Outgoing offers <div class="tooltip" style="z-index: 1"><b>i</b>
   <span class="tooltiptext">This column shows the offers you have sent to other participants. If they decline the offer, it will disappear from this column, and you can send another one. If they accept the offer, you cannot change your trade anymore and all your pending offers will be closed.</span></div></th>
   </tr>
-
+        {{ for reputation in reputation_list }}
     <tr>
-        <td><b style="color:YOU">YOU</b></td>
-        <td></td>
-        <td><b>
-
-            0
-             </b></td>
-        <td><p></p></td>
-        <td id="received-cell-0" class="received-cell"></td>
-        <td id="feedback-cell-0" class="feedback-cell"></td>
-        <td id="sent-cell-0" class="sent-cell"></td>
+        <td>{{if reputation.player.number != 0 }} Participant {{ endif }}<b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></td>
+        <td>{{if reputation.player.number != 0 }}<button type="button" id="select-button{{ reputation.player.number }}" class="select-button" onclick="selectRecipient({{ reputation.player.number }})">Select <br>
+            <b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></button> {{ endif }}</td>
+        <td><b>{{ if reputation.reputation_mean > 0}}
+            {{ reputation.reputation_mean }} more
+            {{else}}
+            {{ if 0 > reputation.reputation_mean }}
+            {{ reputation.reputation_mean }} less
+            {{ else }}
+            {{ reputation.reputation_mean }}
+            {{ endif }} {{ endif }}</b></td>
+        <td><p>{{ for item in reputation.reputation_list }}
+            <span class="tooltip_rep_item"><b style="color:{{item.color}}">{{item.deviation}}</b>,
+      <span class="tooltiptext_rep_item">{{item.color}}</span>
+</span>
+            {{ endfor }}</p></td>
+        <td id="received-cell-{{ reputation.player.number }}" class="received-cell"></td>
+        <td id="feedback-cell-{{ reputation.player.number }}" class="feedback-cell"></td>
+        <td id="sent-cell-{{ reputation.player.number }}" class="sent-cell"></td>
     </tr>
-
-    <tr>
-        <td> Participant <b style="color:BLUE">BLUE</b></td>
-        <td><button type="button" id="select-button3" class="select-button" onclick="selectRecipient(3)">Select <br>
-            <b style="color:BLUE">BLUE</b></button> </td>
-        <td><b>
-
-            0
-             </b></td>
-        <td><p></p></td>
-        <td id="received-cell-3" class="received-cell"></td>
-        <td id="feedback-cell-3" class="feedback-cell"></td>
-        <td id="sent-cell-3" class="sent-cell"></td>
-    </tr>
-
-    <tr>
-        <td> Participant <b style="color:PURPLE">PURPLE</b></td>
-        <td><button type="button" id="select-button6" class="select-button" onclick="selectRecipient(6)">Select <br>
-            <b style="color:PURPLE">PURPLE</b></button> </td>
-        <td><b>
-
-            0
-             </b></td>
-        <td><p></p></td>
-        <td id="received-cell-6" class="received-cell"></td>
-        <td id="feedback-cell-6" class="feedback-cell"></td>
-        <td id="sent-cell-6" class="sent-cell"></td>
-    </tr>
-
-    <tr>
-        <td> Participant <b style="color:GREEN">GREEN</b></td>
-        <td><button type="button" id="select-button4" class="select-button" onclick="selectRecipient(4)">Select <br>
-            <b style="color:GREEN">GREEN</b></button> </td>
-        <td><b>
-
-            0
-             </b></td>
-        <td><p></p></td>
-        <td id="received-cell-4" class="received-cell"></td>
-        <td id="feedback-cell-4" class="feedback-cell"></td>
-        <td id="sent-cell-4" class="sent-cell"></td>
-    </tr>
-
-    <tr>
-        <td> Participant <b style="color:RED">RED</b></td>
-        <td><button type="button" id="select-button5" class="select-button" onclick="selectRecipient(5)">Select <br>
-            <b style="color:RED">RED</b></button> </td>
-        <td><b>
-
-            0
-             </b></td>
-        <td><p></p></td>
-        <td id="received-cell-5" class="received-cell"></td>
-        <td id="feedback-cell-5" class="feedback-cell"></td>
-        <td id="sent-cell-5" class="sent-cell"></td>
-    </tr>
-
-    <tr>
-        <td> Participant <b style="color:ORANGE">ORANGE</b></td>
-        <td><button type="button" id="select-button1" class="select-button" onclick="selectRecipient(1)">Select <br>
-            <b style="color:ORANGE">ORANGE</b></button> </td>
-        <td><b>
-
-            0
-             </b></td>
-        <td><p></p></td>
-        <td id="received-cell-1" class="received-cell"></td>
-        <td id="feedback-cell-1" class="feedback-cell"></td>
-        <td id="sent-cell-1" class="sent-cell"></td>
-    </tr>
-
-            </tbody></table>
+        {{ endfor }}
+            </table>
     </div>
 
-<hr>
-
+<br>
 
 <div id="negotiation">
         <p><b>Send offers</b> <span class="tooltip"><b>i</b>
-      <span class="tooltiptext">Send an offer by selecting a participant, choosing an amount and clicking the button below. The offered and the demanded amount always add up to 15.</span>
+      <span class="tooltiptext">Send an offer by selecting a participant, choosing a number and clicking the button below. The offered and the demanded number always add up to 15.</span>
 </span></p>
     <p id="sendOffer">
         <b><span id="display-recipient">Please select a participant from the table above.</span></b>

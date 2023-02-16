@@ -5,7 +5,7 @@
 
 {{ if player.agreed }}
 
-<p>You earned <b>{{player.payoff}}</b> in this round. {{remaining_budget}} units have remained from your budget resulting in {{remaining_budget_pay}}. Participant <b style="color:{{exchange_partner}}">{{exchange_partner }}</b> sent {{net_receive}} units resulting in {{points_form_partner}}. He or she sent {{if player.deviation_partner > 0 }} <b>{{player.deviation_partner}} unit(s) more</b> than agreed upon{{ else }} {{ if 0 > player.deviation_partner }}<b>{{abs_deviation_partner}} unit(s) less</b> than agreed upon{{ else }} the <b>amount agreed upon</b>{{endif}}{{endif}}. </p>
+<p>You earned <b>{{player.payoff}}</b> in this round. {{remaining_budget}} units have remained from your budget resulting in {{remaining_budget_pay}}. Participant <b style="color:{{exchange_partner}}">{{exchange_partner }}</b> sent {{net_receive}} units resulting in {{points_form_partner}}. He or she sent {{if player.deviation_partner > 0 }} <b>{{player.deviation_partner}} unit(s) more</b> than agreed upon{{ else }} {{ if 0 > player.deviation_partner }}<b>{{abs_deviation_partner}} unit(s) less</b> than agreed upon{{ else }} the <b>number agreed upon</b>{{endif}}{{endif}}. </p>
 
 {{ else }}
 
