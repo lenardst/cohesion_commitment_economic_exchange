@@ -11,7 +11,7 @@ doc = """Negotiation between players"""
 class C(BaseConstants):
     NAME_IN_URL = 'negotiation'
     PLAYERS_PER_GROUP = 6
-    NUM_ROUNDS = 5  # numpy.random.binomial(10, 0.5) + 20 + 1
+    NUM_ROUNDS = numpy.random.binomial(10, 0.5) + 20 + 1
     PAY_TRADED_UNIT = cu(0.03)
     PAY_BUDGET_UNIT = cu(0.01)
     UNIT_BUDGET = 15
@@ -104,6 +104,15 @@ class Game_Instruction(Page):
             rs=player.session.config['rs']
         )
 
+    @staticmethod
+    def js_vars(player: Player):
+        return dict(
+            pay_traded_unit=C.PAY_TRADED_UNIT,
+            pay_budget_unit=C.PAY_BUDGET_UNIT,
+            player_colors=player.participant.player_colors,
+            player_order=player.participant.player_order,
+            unit_budget=C.UNIT_BUDGET
+        )
 
 class Quiz(Page):
     form_model = 'player'
@@ -141,11 +150,11 @@ class Negotiation(Page):
     @staticmethod
     def vars_for_template(player: Player):
         reputation_list = []
-        own_deviations = [i.field_maybe_none('deviation') for i in player.in_previous_rounds() if i.round_number != 1]
+        own_deviations = [[i.deviation, return_color(player, i.exchange_partner)] for i in player.in_previous_rounds() if i.round_number != 1 and i.agreed]
         reputation_list.append(Reputation(DisplayPlayer(0, 'YOU'), own_deviations))
         for i in range(5):
-            deviations = [i.field_maybe_none('deviation') for i in
-                          player.group.get_player_by_id(player.participant.player_order[i]).in_previous_rounds() if
+            deviations = [[i.deviation, return_color(player, i.exchange_partner)] for i in
+                          player.group.get_player_by_id(player.participant.player_order[i]).in_previous_rounds() if i.agreed and
                           (player.session.config['rs'] or i.field_maybe_none('exchange_partner') is player.id_in_group)
                           and i.round_number != 1]
             reputation_list.append(
@@ -396,3 +405,11 @@ class EndPracticeRound(Page):
 page_sequence = [FirstWaitPage, Game_Instruction, Quiz, Answers, WaitForInstructions, WaitForExchange, Negotiation,
                  Deviation,
                  NoExchangePage, WaitAfterExchange, Result, EndPracticeRound]
+
+
+#### Helper functions
+def return_color(player, id):
+    if player.id_in_group == id:
+        return 'BLACK'
+    else:
+        return player.participant.player_colors[player.participant.player_order.index(id)]

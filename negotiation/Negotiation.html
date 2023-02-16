@@ -19,8 +19,9 @@
     <th>Average difference between agreed and sent units <div class="tooltip" style="z-index: 5"><b>i</b>
   <span class="tooltiptext">This column shows the average difference between agreed and sent units for the respective participant. A positive number means that a participant has sent more than agreed in the past. A negative number means that a participant has sent less than agreed in the past.</span>
 </div></th>
-    <th>List of differences between agreed and sent units <div class="tooltip" style="z-index: 4"><b>i</b>
-  <span class="tooltiptext">This column shows the list of differences between agreed and sent units for the respective participant. A positive number means that a participant sent more than agreed. A negative number means that this participant sent less than agreed. The difference from the first trade is listed first and the most recent one is listed last.</span>
+    <th>Differences between agreed and sent units <div class="tooltip" style="z-index: 4"><b>i</b>
+  <span class="tooltiptext">This column shows the list of differences between agreed and sent units for the respective participant. A positive number means that a participant sent more than agreed. A negative number means that this participant sent less than agreed. The difference from the first trade is listed first and the most recent one last. The color indicates with whom the respective participant traded. If you cannot distinguish the colors, hover over the element.</span>
+</div></th>
 </div></th>
       <th>Incoming offers <div class="tooltip" style="z-index: 3"><b>i</b>
   <span class="tooltiptext">This column shows the offers you have received from other participants. You can accept or decline the offer in the right column.</span> </div></th>
@@ -34,24 +35,18 @@
         <td>{{if reputation.player.number != 0 }} Participant {{ endif }}<b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></td>
         <td>{{if reputation.player.number != 0 }}<button type="button" id="select-button{{ reputation.player.number }}" class="select-button" onclick="selectRecipient({{ reputation.player.number }})" disabled>Select <br>
             <b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></button> {{ endif }}</td>
-        <td>{{ if reputation.reputation_mean > 0}}
-            <span style="color: green">{{ reputation.reputation_mean }} more</span>
+        <td><b>{{ if reputation.reputation_mean > 0}}
+            {{ reputation.reputation_mean }} more
             {{else}}
             {{ if 0 > reputation.reputation_mean }}
-            <span style="color: red">{{ reputation.reputation_mean }} less</span>
+            {{ reputation.reputation_mean }} less
             {{ else }}
             {{ reputation.reputation_mean }}
-            {{ endif }} {{ endif }}</td>
-        <td><p>{{ for deviation in reputation.reputation_list }}
-            {{ if deviation > 0}}
-            <span style="color: green">{{deviation}}</span>,
-            {{else}}
-            {{ if 0 > deviation }}
-            <span style="color: red">{{deviation}}</span>,
-            {{ else }}
-            {{deviation}},
-            {{ endif }}
-            {{ endif }}
+            {{ endif }} {{ endif }}</b></td>
+        <td><p>{{ for item in reputation.reputation_list }}
+            <span class="tooltip_rep_item"><b style="color:{{item.color}}">{{item.deviation}}</b>,
+      <span class="tooltiptext_rep_item">{{item.color}}</span>
+</span>
             {{ endfor }}</p></td>
         <td id="received-cell-{{ reputation.player.number }}" class="received-cell"></td>
         <td id="feedback-cell-{{ reputation.player.number }}" class="feedback-cell"></td>
@@ -71,8 +66,8 @@
         <input type="hidden" name="recipient" id="recipient" min="1" max="6">
         <table id="slider_table">
             <tr>
-                        <td style='border:none;' class="quant-cell-left">You receive: <br><span id="left">10 (Your pay-off: €0.30)</span></td>
-                        <td style='border:none;' class="quant-cell-right">The other receives: <br><span id="right">10 (Other's pay-off: €0.30)</span></td>
+                        <td style='border:none;' class="quant-cell-left">You receive: <br><span id="left"><b>0</b> (Your pay-off: €0.30)</span></td>
+                        <td style='border:none;' class="quant-cell-right">The other receives: <br><span id="right"><b>0</b> (Other's pay-off: €0.30)</span></td>
             </tr>
             <tr>
                 <td style='border:none;' id="slider-recieve-cell">You receive:<br><input type="range" id="offer-receive" class="offer-slider" name="slider" min="0" max="{{C.UNIT_BUDGET}}" value="0" step="1"></td>
@@ -131,7 +126,7 @@
             cell_offer = document.getElementById('sent-cell-' + offer_list[i][1]);
             var pay_off = js_vars.pay_traded_unit * offer_list[i][3] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][2]);
             var pay_off_partner = js_vars.pay_traded_unit * offer_list[i][2] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][3]);
-            cell_offer.innerHTML = 'You receive ' + offer_list[i][3] + ' (' + pay_off.toFixed(2) + '€)' + ', the other receives ' + offer_list[i][2] + ' (' + pay_off_partner.toFixed(2) + '€)';
+            cell_offer.innerHTML = 'You receive <b>' + offer_list[i][3] + '</b> (' + pay_off.toFixed(2) + '€)' + ', the other receives <b>' + offer_list[i][2] + '</b> (' + pay_off_partner.toFixed(2) + '€)';
         }
     }
 
@@ -146,9 +141,9 @@
         for (i=0; offer_list.length > i; i++) {
             cell_offer = document.getElementById('received-cell-' + offer_list[i][1]);
             cell_accept_decline = document.getElementById('feedback-cell-' + offer_list[i][1]);
-            var pay_off = js_vars.pay_traded_unit * offer_list[i][3] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][2]);
-            var pay_off_partner = js_vars.pay_traded_unit * offer_list[i][2] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][3]);
-            cell_offer.innerHTML = 'You receive ' + offer_list[i][2] + ' (€' + pay_off.toFixed(2) + ')' + ', the other receives ' + offer_list[i][3] + ' (€' + pay_off_partner.toFixed(2) + ')';
+            var pay_off = js_vars.pay_traded_unit * offer_list[i][2] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][3]);
+            var pay_off_partner = js_vars.pay_traded_unit * offer_list[i][3] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][2]);
+            cell_offer.innerHTML = 'You receive <b>' + offer_list[i][2] + '</b> (€' + pay_off.toFixed(2) + ')' + ', the other receives <b>' + offer_list[i][3] + '</b> (€' + pay_off_partner.toFixed(2) + ')';
             cell_accept_decline.innerHTML = '<button type="button" class="accept-button" id="accept_' + offer_list[i][0] + '" onclick="acceptOffer(' + offer_list[i][0] + ')"><b>Accept</b></button><br><button type="button" class="decline-button" id="decline_' + offer_list[i][0] + '" onclick="declineOffer(' + offer_list[i][0] + ')"><b>Decline</b></button>';
         }
     }
@@ -200,8 +195,8 @@
         var offer = document.getElementById('offer-send').value;
         var pay_off = js_vars.pay_traded_unit * demand + js_vars.pay_budget_unit * (js_vars.unit_budget - offer);
         var pay_off_partner = js_vars.pay_traded_unit * offer + js_vars.pay_budget_unit * (js_vars.unit_budget - demand);
-        document.getElementById('right').innerHTML = offer + ' (Other\'s pay-off: €' + pay_off_partner.toFixed(2) + ')';
-        document.getElementById('left').innerHTML = demand + ' (Your pay-off: €' + pay_off.toFixed(2) + ')';
+        document.getElementById('right').innerHTML = '<b>' + offer + '</b> (Other\'s pay-off: €' + pay_off_partner.toFixed(2) + ')';
+        document.getElementById('left').innerHTML = '<b>' + demand + '</b> (Your pay-off: €' + pay_off.toFixed(2) + ')';
         amount = (offer + demand) != 0;
         changeSendButton();
     }
@@ -337,6 +332,31 @@ button[disabled]{
 }
 
 
+.tooltip_rep_item {
+  position: relative;
+  display: inline-block;
+    opacity: 1;
+}
+
+.tooltiptext_rep_item {
+  visibility: hidden;
+  width: 100px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 5px;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 10;
+  top: -5px;
+  left: 105%;
+}
+
+.tooltip_rep_item:hover .tooltiptext_rep_item {
+  visibility: visible;
+}
 
 </style>
 {{ endblock }}

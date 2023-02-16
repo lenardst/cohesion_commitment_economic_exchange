@@ -4,11 +4,17 @@ from statistics import mean
 class Reputation:
     def __init__(self, player, reputation_list):
         self.player = player
-        self.reputation_list = [i for i in reputation_list if i is not None]
+        self.reputation_list = [ReputationItem(i[0], i[1]) for i in reputation_list]
         if len(self.reputation_list) == 0:
             self.reputation_mean = 0
         else:
-            self.reputation_mean = round(mean(self.reputation_list), 2)
+            self.reputation_mean = round(mean([i[0] for i in reputation_list]), 2)
+
+
+class ReputationItem:
+    def __init__(self, deviation, color):
+        self.deviation = deviation
+        self.color = color
 
 
 class ExchangeRound:
@@ -25,3 +31,4 @@ class DisplayPlayer:
     def __init__(self, number, label):
         self.number = number
         self.label = label
+
