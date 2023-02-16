@@ -170,11 +170,11 @@ class ResultsWaitPage(WaitPage):
     body_text = "Please wait until the other participants have sent their gifts."
 
     @staticmethod
-    def after_all_players_arrive(subsession):
-        for p in subsession.get_players():
+    def after_all_players_arrive(group):
+        for p in group.get_players():
             p.trading_earnings = p.participant.payoff
         set_players = [2, 3, 4, 5, 6, 1]
-        for p in subsession.get_players():
+        for p in group.get_players():
             p.player_to_gift = set_players[p.id_in_group-1]
             player_gift = [p.gift1, p.gift2, p.gift3, p.gift4, p.gift5, p.gift6][
                 p.player_to_gift - 1]
@@ -184,7 +184,7 @@ class ResultsWaitPage(WaitPage):
             other.player_send_gift = p.id_in_group
             other.gift_received += player_gift * C.GIFT_FACTOR
             other.participant.payoff += other.gift_received
-        for p in subsession.get_players():
+        for p in group.get_players():
             p.participant.payoff = round(p.participant.payoff * 2) / 2
 
 
