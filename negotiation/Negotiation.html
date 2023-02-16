@@ -1,11 +1,7 @@
 {{ block title }}Negotiation {{if player.round_number == 1 }}(Practice Round){{endif}}{{ endblock }}
 {{ block content }}
 <div id="instruction">
-    <p>
-    Please send offers to other participants and respond to the offers of others to trade.
-    </p>
-
-    <p>You have received <b>{{C.UNIT_BUDGET}} units</b> to trade. Each unit you do not trade will be converted into a pay-off of €0.01 per unit.
+    <p>You have received <b>{{C.UNIT_BUDGET}} units</b> to trade. Each unit you do not trade will be converted into a pay-off of €0.01 per unit. Please send offers to other participants and respond to the offers of others to trade.
     </p>
 </div>
 
@@ -22,7 +18,6 @@
     <th>Differences between agreed and sent units <div class="tooltip" style="z-index: 4"><b>i</b>
   <span class="tooltiptext">This column shows the list of differences between agreed and sent units for the respective participant. A positive number means that a participant sent more than agreed. A negative number means that this participant sent less than agreed. The difference from the first trade is listed first and the most recent one last. The color indicates with whom the respective participant traded. If you cannot distinguish the colors, hover over the element.</span>
 </div></th>
-</div></th>
       <th>Incoming offers <div class="tooltip" style="z-index: 3"><b>i</b>
   <span class="tooltiptext">This column shows the offers you have received from other participants. You can accept or decline the offer in the right column.</span> </div></th>
       <th>Accept/decline incoming offers <div class="tooltip" style="z-index: 2"><b>i</b>
@@ -31,7 +26,7 @@
   <span class="tooltiptext">This column shows the offers you have sent to other participants. If they decline the offer, it will disappear from this column, and you can send another one. If they accept the offer, you cannot change your trade anymore and all your pending offers will be closed.</span></div></th>
   </tr>
         {{ for reputation in reputation_list }}
-    <tr>
+    <tr class="rep-row">
         <td>{{if reputation.player.number != 0 }} Participant {{ endif }}<b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></td>
         <td>{{if reputation.player.number != 0 }}<button type="button" id="select-button{{ reputation.player.number }}" class="select-button" onclick="selectRecipient({{ reputation.player.number }})" disabled>Select <br>
             <b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></button> {{ endif }}</td>
@@ -356,6 +351,10 @@ button[disabled]{
 
 .tooltip_rep_item:hover .tooltiptext_rep_item {
   visibility: visible;
+}
+
+.rep-row{
+  height: 83px;
 }
 
 </style>

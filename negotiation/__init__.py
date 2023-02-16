@@ -39,7 +39,7 @@ class Player(BasePlayer):
     exchange_partner = models.IntegerField()
     send = models.IntegerField()
     receive = models.IntegerField()
-    deviation = models.IntegerField(min=-C.DEVIATION, max=C.DEVIATION)
+    deviation = models.IntegerField(min=-C.DEVIATION, max=C.DEVIATION, initial=0)
     deviation_partner = models.IntegerField()
     reason_no_exchange = models.IntegerField(choices=[
         [1, 'I did not want to trade'],
@@ -217,7 +217,7 @@ class Negotiation(Page):
                 return {player.id_in_group: ['E',
                                              'This offer is not allowed because you sent it to a participant who '
                                              'agreed on a trade already or one of the offers you sent this '
-                                             'participant is still pending.']}
+                                             'participant is still pending. Please continue the negotiating.']}
         else:
             if data[0] == 'D':  # D for decline
                 offer = Offer.filter(receiver=player, offer_id=data[1])[0]
@@ -280,7 +280,7 @@ class Negotiation(Page):
                     else:
                         return {player.id_in_group: ['E',
                                                      'You accepted an offer that was closed by the sender by '
-                                                     'accepting another offer.']}
+                                                     'accepting another offer. Please continue negotiating.']}
                 else:
                     if data[0] == 'R':
                         offers = Offer.filter(group=player.group)
