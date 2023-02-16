@@ -202,7 +202,7 @@ class GiftGiving(Page):
     @staticmethod
     def js_vars(player: Player):
         return dict(
-            other_players=[p.id_in_group for p in player.get_others_in_subsession()]
+            other_players=[p.id_in_group for p in player.get_others_in_group()]
         )
     pass
 
@@ -236,7 +236,7 @@ class Questionaire(Page):
     @staticmethod
     def js_vars(player: Player):
         return dict(
-            other_players=[p.id_in_group for p in player.get_others_in_subsession()]
+            other_players=[p.id_in_group for p in player.get_others_in_group()]
         )
     pass
 
