@@ -3,7 +3,7 @@
 {{ endblock }}
 {{ block content }}
 
-<p>Please find your payoff in the table below. The payoff will be given to you in cash at the registration desk before you leave the lab.</p>
+<p>Please find your payoff in the table below.</p>
 
 <table>
     <tr>
@@ -22,11 +22,27 @@
     <td> <b>TOTAL</b></td>
     <td> <b>{{total}}</b></td>
     </tr>
+    </table> <br>
 
-    </table>
+<p>Note that your payoff is rounded to €0.50 (e.g., a payoff of €5.36 will round up to €5.50).</p>
 
-<p>Note that your payoff will be rounded to €0.50 (e.g., a payoff of €5.36 will round up to €5.50).</p>
+<p>The experiment is now over. Please remain and complete the following steps:</p>
+    <ol>
+    <li>Wait until the experimenter brings you the money and the receipt to your seat.</li>
+    <li>Count the money to make sure it is the right amount.</li>
+    <li>Write your name on the receipt and sign it.</li>
+    <li>Leave the instructions, the envelope, and your participant code in on your desk.</li>
+    <li>Return the receipt at the registration desk.</li>
+    <li>You are ready to leave.</li>
+</ol>
+{{ endblock }}
 
-<p>The experiment is now over. Please remain seated until the experimenter ends the session. The money will be brought to you, you will count it to make sure it is the right amount, sign the receipt, hand the receipt to the experimenter at the registration desk, and then you might leave.</p>
 
+{% block style %}
+<style>
+   td, th, tr {
+    border: 1px solid black;
+    padding: 5px;
+  }
+</style>
 {{ endblock }}

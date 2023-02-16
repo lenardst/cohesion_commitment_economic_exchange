@@ -3,8 +3,10 @@
 {{ endblock }}
 {{ block content }}
 
-<p> The last round of trading is now finished. You have received another <b>{{C.GIFT}}</b>. You may now gift up to {{C.GIFT}} to each other participant. Only one of your gifts will be randomly chosen and given to the respective participant. The amount you gifted will be multiplied by three. If you gift €0.10, for example, the recipient receives €0.30, and you receive €0.90. You will keep the remaining money. In the end, you will learn how much you were gifted.<p/>
+<p> The last round of trading is now finished. You have received another <b>{{C.GIFT}}</b>. You may now gift up to {{C.GIFT}} to each other participant. Only one of your gifts will be randomly chosen and given to the respective participant. You will keep the remaining money. The amount you gifted will be multiplied by three. If you gift €0.10, for example, the recipient receives €0.30, and you receive €0.90. In the end, you will learn how much you were gifted.<p/>
 <hr>
+    {{ for p in other_players }}
+
   {{ if p.number not in exchange_partners }}
 
 <p> You did not trade with participant <b style="color:{{p.label}}">{{p.label}}</b>.</p>
@@ -35,11 +37,10 @@
         {{ endfor }}
             </table>
             {{endif}}
-
-    {{ for p in other_players }}
+<br>
     <p> Gift between €0 and €1 to participant <b style="color:{{p.label}}">{{p.label}}</b>:
     <b>€<span id="value{{p.number}}">0</span></b></p>
-    <input id="gift_slider{{p.number}}" class="deviation-slider" type="range" min="0" max="1" value="0" step="0.01">
+    <input id="gift_slider{{p.number}}" oninput="changeGift({{p.number}})" class="deviation-slider" type="range" min="0" max="1" value="0" step="0.01">
 
     <hr>
     {{ endfor }}
@@ -97,67 +98,13 @@ td, th{
 
 <script>
     var player_list = js_vars.other_players;
-    for (var p=0; p < player_list.length; p++){
 
-    }
-    if (player_list.includes(1)){
-        var slider1 = document.getElementById("gift_slider1");
-        var value1 = document.getElementById("value1");
-        var deviation1 = document.getElementById('id_gift1');
-        slider1.oninput = function(){
-            value1.innerHTML = this.value;
-            deviation1.value = this.value;
-        }
-    }
-
-    if (player_list.includes(2)){
-        var slider2 = document.getElementById("gift_slider2");
-        var value2 = document.getElementById("value2");
-        var deviation2 = document.getElementById('id_gift2');
-        slider2.oninput = function(){
-            value2.innerHTML = this.value;
-            deviation2.value = this.value;
-        }
-    }
-
-    if (player_list.includes(3)){
-        var slider3 = document.getElementById("gift_slider3");
-        var value3 = document.getElementById("value3");
-        var deviation3 = document.getElementById('id_gift3');
-        slider3.oninput = function(){
-            value3.innerHTML = this.value;
-            deviation3.value = this.value;
-        }
-    }
-
-    if (player_list.includes(4)){
-        var slider4 = document.getElementById("gift_slider4");
-        var value4 = document.getElementById("value4");
-        var deviation4 = document.getElementById('id_gift4');
-        slider4.oninput = function(){
-            value4.innerHTML = this.value;
-            deviation4.value = this.value;
-        }
-    }
-
-    if (player_list.includes(5)){
-        var slider5 = document.getElementById("gift_slider5");
-        var value5 = document.getElementById("value5");
-        var deviation5 = document.getElementById('id_gift5');
-        slider5.oninput = function(){
-            value5.innerHTML = this.value;
-            deviation5.value = this.value;
-        }
-    }
-
-    if (player_list.includes(6)){
-        var slider6 = document.getElementById("gift_slider6");
-        var value6 = document.getElementById("value6");
-        var deviation6 = document.getElementById('id_gift6');
-        slider6.oninput = function(){
-            value6.innerHTML = this.value;
-            deviation6.value = this.value;
-        }
+        function changeGift(player){
+        var slider = document.getElementById("gift_slider" + player);
+        var value = document.getElementById("value" + player);
+        var deviation = document.getElementById('id_gift' + player);
+        value.innerHTML = slider.value;
+        deviation.value = slider.value;
     }
 </script>
 

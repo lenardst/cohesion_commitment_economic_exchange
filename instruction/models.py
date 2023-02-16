@@ -16,5 +16,5 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    consent = models.BooleanField(label='I hereby confirm that I have understood and agree to the conditions.', choices=[[1, 'Yes']])
+    consent = models.BooleanField(label='I hereby confirm that I have signed the consent form and gave it to the experimenter.', choices=[[1, 'Yes']])
     pass
