@@ -11,7 +11,7 @@ doc = """Negotiation between players"""
 class C(BaseConstants):
     NAME_IN_URL = 'negotiation'
     PLAYERS_PER_GROUP = 6
-    NUM_ROUNDS = numpy.random.binomial(10, 0.5) + 20 + 1
+    NUM_ROUNDS = 2  # numpy.random.binomial(10, 0.5) + 20 + 1
     PAY_TRADED_UNIT = cu(0.03)
     PAY_BUDGET_UNIT = cu(0.01)
     UNIT_BUDGET = 15
