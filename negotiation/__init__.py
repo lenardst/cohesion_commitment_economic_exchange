@@ -418,7 +418,6 @@ class EndPracticeRound(Page):
         return dict(
             rs=player.session.config['rs'],
             exchange_partner=exchange_partner
-
         )
 
 

@@ -11,7 +11,7 @@ def check_acceptance_legal(offer):
 
 
 def get_available_players(player, offers):
-    exchange_agreed = [p.id_in_group for p in player.get_others_in_subsession() if p.agreed]
+    exchange_agreed = [p.id_in_group for p in player.get_others_in_group() if p.agreed]
     offer_pending = [o.receiver.id_in_group for o in offers if o.sender.id_in_group is player.id_in_group and not o.closed]
     return [i for i in range(1, 7) if i not in exchange_agreed and i not in offer_pending and i is not player.id_in_group]
 
