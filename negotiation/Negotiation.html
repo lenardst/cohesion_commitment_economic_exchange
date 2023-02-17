@@ -1,7 +1,7 @@
 {{ block title }}Negotiation {{if player.round_number == 1 }}(Practice Round){{endif}}{{ endblock }}
 {{ block content }}
 <div id="instruction">
-    <p>You have received <b>{{C.UNIT_BUDGET}} units</b> to trade. Each unit you do not trade will be converted into a pay-off of €0.01 per unit. Please send offers to other participants and respond to the offers of others to trade.
+    <p>You have received <b>{{C.UNIT_BUDGET}} units</b> to trade. Each unit you do not trade will be converted into a payoff of €0.01 per unit. Please send offers to other participants and respond to the offers of others to trade.
     </p>
 </div>
 
@@ -61,8 +61,8 @@
         <input type="hidden" name="recipient" id="recipient" min="1" max="6">
         <table id="slider_table">
             <tr>
-                        <td style='border:none;' class="quant-cell-left">You receive: <br><span id="left"><b>0</b> (Your pay-off: €0.30)</span></td>
-                        <td style='border:none;' class="quant-cell-right">The other receives: <br><span id="right"><b>0</b> (Other's pay-off: €0.30)</span></td>
+                        <td style='border:none;' class="quant-cell-left">You receive: <br><span id="left"><b>0</b> (Your payoff: €0.30)</span></td>
+                        <td style='border:none;' class="quant-cell-right">The other receives: <br><span id="right"><b>0</b> (Other's payoff: €0.30)</span></td>
             </tr>
             <tr>
                 <td style='border:none;' id="slider-recieve-cell">You receive:<br><input type="range" id="offer-receive" class="offer-slider" name="slider" min="0" max="{{C.UNIT_BUDGET}}" value="0" step="1"></td>
@@ -190,8 +190,8 @@
         var offer = document.getElementById('offer-send').value;
         var pay_off = js_vars.pay_traded_unit * demand + js_vars.pay_budget_unit * (js_vars.unit_budget - offer);
         var pay_off_partner = js_vars.pay_traded_unit * offer + js_vars.pay_budget_unit * (js_vars.unit_budget - demand);
-        document.getElementById('right').innerHTML = '<b>' + offer + '</b> (Other\'s pay-off: €' + pay_off_partner.toFixed(2) + ')';
-        document.getElementById('left').innerHTML = '<b>' + demand + '</b> (Your pay-off: €' + pay_off.toFixed(2) + ')';
+        document.getElementById('right').innerHTML = '<b>' + offer + '</b> (Other\'s payoff: €' + pay_off_partner.toFixed(2) + ')';
+        document.getElementById('left').innerHTML = '<b>' + demand + '</b> (Your payoff: €' + pay_off.toFixed(2) + ')';
         amount = (offer + demand) != 0;
         changeSendButton();
     }

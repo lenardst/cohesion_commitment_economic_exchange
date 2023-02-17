@@ -2,14 +2,14 @@
 {{ block content }}
 
     <p>
-    You have received another <b>{{C.DEVIATION}} units</b>. You now have 20 units in total. You have agreed to send {{player.send}} units to participant <b style="color:{{exchange_partner}}">{{exchange_partner}}</b>. You may send up to {{C.DEVIATION}} units more or less than agreed upon. Each unit you do not send will be converted into a pay-off of €0.01 per unit.
+    You have received another <b>{{C.DEVIATION}} units</b>. You now have 20 units in total. You have agreed to send {{player.send}} units to participant <b style="color:{{exchange_partner}}">{{exchange_partner}}</b>. You may send up to {{C.DEVIATION}} units more or less than agreed upon. Each unit you do not send will be converted into a payoff of €0.01 per unit.
     </p>
     {{ form.deviation }}
 
         <table id="slider_table">
             <tr>
-                        <td style='border:none;' class="quant-cell-left">Change in your pay-off: <br><span id="left">0.00</span> €</td>
-                        <td style='border:none;' class="quant-cell-right">Change in other's pay-off: <br><span id="right">0.00</span> €</td>
+                        <td style='border:none;' class="quant-cell-left">Change in your payoff: <br><span id="left">0.00</span> €</td>
+                        <td style='border:none;' class="quant-cell-right">Change in other's payoff: <br><span id="right">0.00</span> €</td>
             </tr>
             <tr>
                         <td style='border:none;' colspan="2" id="slider-cell"><p id="result">Send <b>{{player.send}} units</b> as agreed upon.</p><input id="slider" class="deviation-slider" type="range" min="{{slider_min}}" max="{{slider_max}}" value="{{slider_middle}}" step="1" required></td>

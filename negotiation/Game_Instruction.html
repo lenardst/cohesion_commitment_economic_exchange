@@ -68,8 +68,8 @@
         <input type="hidden" name="recipient" id="recipient" min="1" max="6">
         </p><table id="slider_table">
             <tbody><tr>
-                        <td style="border:none;" class="quant-cell-left">You receive: <br><span id="left"><b>0</b> (Your pay-off: €0.30)</span></td>
-                        <td style="border:none;" class="quant-cell-right">The other receives: <br><span id="right"><b>0</b> (Other's pay-off: €0.30)</span></td>
+                        <td style="border:none;" class="quant-cell-left">You receive: <br><span id="left"><b>0</b> (Your payoff: €0.30)</span></td>
+                        <td style="border:none;" class="quant-cell-right">The other receives: <br><span id="right"><b>0</b> (Other's payoff: €0.30)</span></td>
             </tr>
             <tr>
                 <td style="border:none;" id="slider-recieve-cell">You receive:<br><input type="range" id="offer-receive" class="offer-slider" name="slider" min="0" max="15" value="0" step="1"></td>
@@ -274,8 +274,8 @@ button[disabled]{
         var offer = document.getElementById('offer-send').value;
         var pay_off = js_vars.pay_traded_unit * demand + js_vars.pay_budget_unit * (js_vars.unit_budget - offer);
         var pay_off_partner = js_vars.pay_traded_unit * offer + js_vars.pay_budget_unit * (js_vars.unit_budget - demand);
-        document.getElementById('right').innerHTML = offer + ' (Other\'s pay-off: €' + pay_off_partner.toFixed(2) + ')';
-        document.getElementById('left').innerHTML = demand + ' (Your pay-off: €' + pay_off.toFixed(2) + ')';
+        document.getElementById('right').innerHTML = offer + ' (Other\'s payoff: €' + pay_off_partner.toFixed(2) + ')';
+        document.getElementById('left').innerHTML = demand + ' (Your payoff: €' + pay_off.toFixed(2) + ')';
         amount = (offer + demand) != 0;
         changeSendButton();
     }
