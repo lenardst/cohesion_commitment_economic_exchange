@@ -5,6 +5,8 @@
 
 <p>Please find your payoff in the table below. Note that your payoff is rounded to €0.50 (e.g., a payoff of €5.36 will round up to €5.50).</p>
 
+<div id="earnings-table">
+
 <table>
     <tr>
     <td> Payoff trading</td>
@@ -23,15 +25,18 @@
     <td> <b>{{total}}</b></td>
     </tr>
     </table> <br>
+    </div>
+
+<button id="hide-button" onclick="toggleVisibility()">Hide earnings</button>
 
 <p>The experiment is now over. Please remain at your seat and complete the following steps:</p>
     <ol>
     <li>Wait until the experimenter brings you the money and the receipt to your seat.</li>
     <li>Count the money to make sure it is the right amount.</li>
-    <li>Write your name on the receipt and sign it.</li>
+    <li>Hide your earnings on the screen with the button below the table.</li>
     <li>Leave the instructions, the envelope, and your participant code on your desk.</li>
-    <li>Return the receipt at the registration desk.</li>
-    <li>You are ready to leave.</li>
+    <li>Return the receipt upside down at the registration desk.</li>
+    <li>You are ready to leave quietly. Thank you for participating!</li>
 </ol>
 {{ endblock }}
 
@@ -43,4 +48,20 @@
     padding: 5px;
   }
 </style>
+{{ endblock }}
+
+{% block script %}
+<script>
+      function toggleVisibility() {
+        var element = document.getElementById("earnings-table");
+        var button = document.getElementById('hide-button')
+        if (element.style.display === "none") {
+          element.style.display = "block";
+          button.innerHTML = 'Hide earnings'
+        } else {
+          element.style.display = "none";
+          button.innerHTML = 'Show earnings'
+        }
+      }
+</script>
 {{ endblock }}
