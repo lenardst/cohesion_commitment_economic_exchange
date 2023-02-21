@@ -80,7 +80,7 @@
             </div>
 <br>
 
-<p>The button below will only be enabled after five minutes. Please continue if you have read all instructions on paper carefully and have no questions.</p>
+<p>The button below will only be enabled after three minutes. Please continue if you have read all instructions on paper carefully and have no questions.</p>
 
 
     {{ next_button }}
@@ -204,10 +204,10 @@ button[disabled]{
     //disable the button
     nextBtn.disabled = true;
 
-    //enable the button after 5 minutes
+    //enable the button after 3 minutes
     setTimeout(function(){
     nextBtn.disabled = false;
-    }, 300000);
+    }, 180000);
 
 
 
