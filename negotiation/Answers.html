@@ -31,9 +31,27 @@
 
 <br>
 <br>
-
-{{ formfields }}
+Please proceed if you have read and understood the answers. The 'Next' button will be enabled after 90 seconds.
+<br>
 
     {{ next_button }}
 
 {{ endblock }}
+
+{% block scripts %}
+<script>
+    const nextBtn = document.getElementsByClassName("otree-btn-next btn btn-primary")[0];
+
+    //disable the button
+    nextBtn.disabled = true;
+
+    //enable the button after 3 minutes
+    setTimeout(function(){
+    nextBtn.disabled = false;
+    }, 90000);
+</script>
+
+{{ endblock }}
+
+
+
