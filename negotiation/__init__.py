@@ -18,7 +18,7 @@ class C(BaseConstants):
     DEVIATION = 5
     PLAYER_COLORS = ['GREEN', 'BLUE', 'ORANGE', 'PURPLE', 'RED']
     QUESTION1 = 'If you agree to a trade that you receive 10 units, is it guaranteed that you will receive at least 10 units?'
-    QUESTION2 = 'If you accept an offer, another participant can still accept an offer of yours in the same round?'
+    QUESTION2 = 'If you accept an offer, can another participant still accept an offer of yours in the same round?'
     QUESTION3 = 'Assume you agreed with another participant to send 10 units. If you now decide to send 9 instead of 10 units, how many other participants will learn about your decision?'
 
 pass
