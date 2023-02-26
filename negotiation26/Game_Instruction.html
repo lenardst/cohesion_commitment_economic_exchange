@@ -1,0 +1,315 @@
+{{ block title }}
+    Task Instructions
+{{ endblock }}
+{{ block content }}
+
+
+<p><b>Please now read the instructions on paper handed to you.</b></p>
+
+<h3>Interface</h3>
+<p>Below, you see the interface that you will use for the negotiation. The table displays all information about other participants and the offers you sent and received. When you select a participant, you can send an offer using the tool below the table. You may hover over the <span class="tooltip" style="z-index: 6"><b>i</b>
+  <span class="tooltiptext">Hover over this icon to learn more about the element.</span>
+</span> to learn more about the element you are looking at. In the practice round, you will become familiar with the interface.
+</p>
+    <div id="reputation">
+        <table id="reputation_table">
+  <tr>
+    <th>Participant</th>
+      <th>Select for Offer <div class="tooltip" style="z-index: 6"><b>i</b>
+  <span class="tooltiptext">Use the buttons to select a participant you want to send an offer to. Next, choose the numbers of units and send the offer below the table.</span>
+</div></th>
+    <th>Average difference between agreed and sent units <div class="tooltip" style="z-index: 5"><b>i</b>
+  <span class="tooltiptext">This column shows the average difference between agreed and sent units for the respective participant. A positive number means that a participant has sent more than agreed in the past. A negative number means that a participant has sent less than agreed in the past.</span>
+</div></th>
+    <th>Differences between agreed and sent units <div class="tooltip" style="z-index: 4"><b>i</b>
+  <span class="tooltiptext">This column shows the list of differences between agreed and sent units for the respective participant. A positive number means that a participant sent more than agreed. A negative number means that this participant sent less than agreed. The difference from the first trade is listed first and the most recent one last. The color indicates with whom the respective participant traded. If you cannot distinguish the colors, hover over the element.</span>
+</div></th>
+      <th>Incoming offers <div class="tooltip" style="z-index: 3"><b>i</b>
+  <span class="tooltiptext">This column shows the offers you have received from other participants. You can accept or decline the offer in the right column.</span> </div></th>
+      <th>Accept/decline incoming offers <div class="tooltip" style="z-index: 2"><b>i</b>
+  <span class="tooltiptext">In this column, you can accept or decline offers from other participants. Once you accept an offer, you cannot change your trade anymore. If you agreed to a trade, all your pending offers will be closed.</span> </div></th>
+      <th>Outgoing offers <div class="tooltip" style="z-index: 1"><b>i</b>
+  <span class="tooltiptext">This column shows the offers you have sent to other participants. If they decline the offer, it will disappear from this column, and you can send another one. If they accept the offer, you cannot change your trade anymore and all your pending offers will be closed.</span></div></th>
+  </tr>
+        {{ for reputation in reputation_list }}
+    <tr>
+        <td>{{if reputation.player.number != 0 }} Participant {{ endif }}<b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></td>
+        <td>{{if reputation.player.number != 0 }}<button type="button" id="select-button{{ reputation.player.number }}" class="select-button" onclick="selectRecipient({{ reputation.player.number }})">Select <br>
+            <b style="color:{{reputation.player.label}}">{{ reputation.player.label }}</b></button> {{ endif }}</td>
+        <td><b>{{ if reputation.reputation_mean > 0}}
+            {{ reputation.reputation_mean }} more
+            {{else}}
+            {{ if 0 > reputation.reputation_mean }}
+            {{ reputation.reputation_mean }} less
+            {{ else }}
+            {{ reputation.reputation_mean }}
+            {{ endif }} {{ endif }}</b></td>
+        <td><p>{{ for item in reputation.reputation_list }}
+            <span class="tooltip_rep_item"><b style="color:{{item.color}}">{{item.deviation}}</b>,
+      <span class="tooltiptext_rep_item">{{item.color}}</span>
+</span>
+            {{ endfor }}</p></td>
+        <td id="received-cell-{{ reputation.player.number }}" class="received-cell"></td>
+        <td id="feedback-cell-{{ reputation.player.number }}" class="feedback-cell"></td>
+        <td id="sent-cell-{{ reputation.player.number }}" class="sent-cell"></td>
+    </tr>
+        {{ endfor }}
+            </table>
+    </div>
+
+<br>
+
+<div id="negotiation">
+        <p><b>Send offers</b> <span class="tooltip"><b>i</b>
+      <span class="tooltiptext">Send an offer by selecting a participant, choosing a number and clicking the button below. The offered and the demanded number always add up to 15.</span>
+</span></p>
+    <p id="sendOffer">
+        <b><span id="display-recipient">Please select a participant from the table above.</span></b>
+        <input type="hidden" name="recipient" id="recipient" min="1" max="6">
+        </p><table id="slider_table">
+            <tbody><tr>
+                        <td style="border:none;" class="quant-cell-left">You receive: <br><span id="left"><b>0</b> (Your payoff: €0.30)</span></td>
+                        <td style="border:none;" class="quant-cell-right">The other receives: <br><span id="right"><b>0</b> (Other's payoff: €0.30)</span></td>
+            </tr>
+            <tr>
+                <td style="border:none;" id="slider-recieve-cell">You receive:<br><input type="range" id="offer-receive" class="offer-slider" name="slider" min="0" max="15" value="0" step="1"></td>
+                <td style="border:none;" id="slider-send-cell"> The other receives:<br><input type="range" id="offer-send" class="offer-slider" name="slider" min="0" max="15" value="0" step="1"></td>
+            </tr>
+                </tbody></table>
+        <input type="button" value="Send offer" id="button_send" disabled="">
+            </div>
+<br>
+
+<p>Please continue if you have read all instructions on paper carefully and have no questions. The 'Next' button below will be enabled after three minutes. </p>
+
+
+    {{ next_button }}
+
+{{ endblock }}
+
+
+{% block style %}
+<style>
+    #reputation_table{
+    display: flex;
+    flex-direction: row;
+      text-align: center;
+  }
+
+   td, th, tr {
+    border: 1px solid black;
+    padding: 5px;
+  }
+
+.container {
+  grid-template-columns: 1fr 1fr; /* Two columns with equal width */
+}
+
+.full-block {
+    float: none;
+    display: inline-block;
+}
+
+.offer-slider {
+  width: 300px;
+}
+
+#button_send {
+    margin-top: 10px;
+    width: 400px;
+}
+
+.quant-cell-right{
+    text-align: right;
+}
+
+.width200 {
+    width: 200px;
+}
+
+  .otree-timer.alert.alert-warning {
+    padding: 5px 5px !important;
+      padding-left: 5px;
+}
+
+.otree-timer.alert.alert-warning > p {
+    margin-bottom: 0px !important;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+    opacity: 1;
+    color: white;
+    border-color: green;
+    background-color: green;
+    padding: 1px 5px;
+    border-radius: 10px;
+    z-index: 1;
+}
+
+.tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 5px;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 2;
+  top: -5px;
+  left: 105%;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.active-select-button {
+    background-color: #72b2ff;
+    }
+
+.select-button, .accept-button, .decline-button {
+    width: 85px;
+}
+
+.decline-button {
+    margin-top: 3px;
+    background-color: red;
+    color: white;
+}
+
+.accept-button {
+    background-color: green;
+    color: white;
+}
+
+button:disabled,
+button[disabled]{
+    color: black;
+    opacity: .7;
+}
+
+</style>
+{{ endblock }}
+
+{% block scripts %}
+<script>
+    const nextBtn = document.getElementsByClassName("otree-btn-next btn btn-primary")[0];
+
+    //disable the button
+    nextBtn.disabled = true;
+
+    //enable the button after 3 minutes
+    setTimeout(function(){
+    nextBtn.disabled = false;
+    }, 180000);
+
+
+
+    const form = document.getElementById('sendOffer');
+    document.getElementById('button_send').onclick = sendOffer;
+    const received_table = document.getElementById('received_table')
+    const sent_table = document.getElementById('sent_table')
+    const player_colors = js_vars.player_colors
+    const player_order = js_vars.player_order
+    var amount = 0;
+    var player_selected = 0;
+
+    function sendOffer(event) {
+        let recipient = document.getElementById('recipient').value;
+        let offer = document.getElementById('offer-send').value;
+        let demand = document.getElementById('offer-receive').value;
+    }
+
+    function displayPendingOffers(offer_list){
+        var list1 = document.getElementsByClassName("sent-cell");
+        for (i = 0; list1.length > i; i++) {
+            list1[i].innerHTML = ""
+        }
+        for (i = 0; offer_list.length > i; i++){
+            cell_offer = document.getElementById('sent-cell-' + offer_list[i][1]);
+            var pay_off = js_vars.pay_traded_unit * offer_list[i][3] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][2]);
+            var pay_off_partner = js_vars.pay_traded_unit * offer_list[i][2] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][3]);
+            cell_offer.innerHTML = 'You receive ' + offer_list[i][3] + ' (' + pay_off.toFixed(2) + '€)' + ', the other receives ' + offer_list[i][2] + ' (' + pay_off_partner.toFixed(2) + '€)';
+        }
+    }
+
+    function displayOpenOffers(offer_list) {
+        var list1 = document.getElementsByClassName("received-cell");
+        var list2 = document.getElementsByClassName('feedback-cell');
+        for (i = 0; list1.length > i; i++) {
+            list1[i].innerHTML = ""
+            list2[i].innerHTML = ""
+        }
+
+        for (i=0; offer_list.length > i; i++) {
+            cell_offer = document.getElementById('received-cell-' + offer_list[i][1]);
+            cell_accept_decline = document.getElementById('feedback-cell-' + offer_list[i][1]);
+            var pay_off = js_vars.pay_traded_unit * offer_list[i][3] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][2]);
+            var pay_off_partner = js_vars.pay_traded_unit * offer_list[i][2] + js_vars.pay_budget_unit * (js_vars.unit_budget - offer_list[i][3]);
+            cell_offer.innerHTML = 'You receive ' + offer_list[i][2] + ' (€' + pay_off.toFixed(2) + ')' + ', the other receives ' + offer_list[i][3] + ' (€' + pay_off_partner.toFixed(2) + ')';
+            cell_accept_decline.innerHTML = '<button type="button" class="accept-button" id="accept_' + offer_list[i][0] + '" onclick="acceptOffer(' + offer_list[i][0] + ')"><b>Accept</b></button><br><button type="button" class="decline-button" id="decline_' + offer_list[i][0] + '" onclick="declineOffer(' + offer_list[i][0] + ')"><b>Decline</b></button>';
+        }
+    }
+
+   function displayPlayers(player_list){
+        var buttons = document.getElementsByClassName('select-button')
+        for(var i = 0; i < buttons.length; i++) {
+            buttons[i].disabled = true;
+            buttons[i].classList.remove('active-select-button');
+        }
+        console.log(player_list)
+        for (var i = 0; i < player_list.length; i++) {
+            console.log('select-button' + player_list[i])
+            document.getElementById('select-button' + player_list[i]).removeAttribute('disabled');
+        }
+        if (document.getElementById('recipient').value == ""){
+            document.getElementById('display-recipient').innerHTML = "Please select a participant from the table above.";
+        } else if (!player_list.includes(document.getElementById('recipient').value)){
+            document.getElementById('recipient').value = "";
+            document.getElementById('display-recipient').innerHTML = "Please select another participant if you want to send another offer.";
+            player_selected = 0;
+            changeSendButton();
+        }
+    }
+
+    document.getElementById('offer-send').addEventListener('input', changeDemand)
+    document.getElementById('offer-receive').addEventListener('input', changeDemand)
+
+    function changeDemand(){
+        var demand = document.getElementById('offer-receive').value;
+        var offer = document.getElementById('offer-send').value;
+        var pay_off = js_vars.pay_traded_unit * demand + js_vars.pay_budget_unit * (js_vars.unit_budget - offer);
+        var pay_off_partner = js_vars.pay_traded_unit * offer + js_vars.pay_budget_unit * (js_vars.unit_budget - demand);
+        document.getElementById('right').innerHTML = offer + ' (Other\'s payoff: €' + pay_off_partner.toFixed(2) + ')';
+        document.getElementById('left').innerHTML = demand + ' (Your payoff: €' + pay_off.toFixed(2) + ')';
+        amount = (offer + demand) != 0;
+        changeSendButton();
+    }
+
+    function changeSendButton(){
+        if (player_selected & amount){
+            document.getElementById('button_send').removeAttribute('disabled');
+        } else {
+            document.getElementById('button_send').disabled = true;
+        }
+    }
+
+    function selectRecipient(number) {
+        var active_button = document.getElementsByClassName('active-select-button')[0];
+        if(active_button != null){
+            active_button.classList.remove('active-select-button')
+        }
+        document.getElementById('select-button' + number).classList.add('active-select-button');
+        document.getElementById("recipient").value = number;
+        document.getElementById("display-recipient").innerHTML = "You selected participant <b style='color:" + player_colors[player_order.indexOf(number)]+ "'>" + player_colors[player_order.indexOf(number)] + "</b>.";
+        player_selected = 1;
+        changeSendButton();
+    }
+</script>
+{{ endblock }}

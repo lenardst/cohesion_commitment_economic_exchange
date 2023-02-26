@@ -1,0 +1,58 @@
+{{ block title }}
+    Correct Answers
+{{ endblock }}
+{{ block content }}
+
+<b>Question: </b>{{C.QUESTION1}}<br>
+<b>Your answer: </b>{{if player.quiz1}} Yes {{else}} No {{endif}}
+<br>
+<b>Correct answer: </b> No
+<br>
+<b>Explanation: </b> The participant you agreed with might send up to five units more or less. That means you will receive at least 5 and at most 15 units from the described trade.
+
+<hr>
+
+<b>Question: </b>{{C.QUESTION2}}
+<br>
+<b>Your answer: </b>{{if player.quiz2}} Yes {{else}} No {{endif}}
+<br>
+<b>Correct answer: </b> No
+<br>
+<b>Explanation: </b> Once you accept an offer, all other offers you sent and all other offers you received are closed. That means no other player than the one you agreed with will be able to exchange with you in the same round.
+
+<hr>
+<b>Question: </b>{{C.QUESTION3}}
+<br>
+<b>Your answer: </b>{{player.quiz3}}
+<br>
+<b>Correct answer: </b> {{if rs }} 5 {{else}} 1 {{endif}}
+<br>
+<b>Explanation: </b> {{if rs }} All participants learn about the difference between the number of units you agree on and the number of units you send. It will be displayed to them in all following rounds. {{else}} Only the participant you trade with learns about the difference between the number of units you agree on and the number of units you send. It will be displayed to her/him in all following rounds. {{endif}}
+
+<br>
+<br>
+Please proceed if you have read and understood the answers. The 'Next' button will be enabled after 90 seconds.
+<br>
+<br>
+
+    {{ next_button }}
+
+{{ endblock }}
+
+{% block scripts %}
+<script>
+    const nextBtn = document.getElementsByClassName("otree-btn-next btn btn-primary")[0];
+
+    //disable the button
+    nextBtn.disabled = true;
+
+    //enable the button after 3 minutes
+    setTimeout(function(){
+    nextBtn.disabled = false;
+    }, 90000);
+</script>
+
+{{ endblock }}
+
+
+

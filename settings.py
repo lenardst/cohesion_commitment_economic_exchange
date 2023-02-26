@@ -10,10 +10,16 @@ SESSION_CONFIGS = [
      ),
     dict(
         name='EcoEx_NoRS_24',
-         display_name="Economic Exchange and Reputation Systems (Baseline)",
+         display_name="Economic Exchange and Reputation Systems (Baseline, 24 rounds)",
          app_sequence=['instruction', 'negotiation24', 'scmeasure'],
          num_demo_participants=6,
-         rs=False)
+         rs=False),
+    dict(
+        name='EcoEx_NoRS_26',
+        display_name="Economic Exchange and Reputation Systems (Baseline, 26 rounds)",
+        app_sequence=['instruction', 'negotiation26', 'scmeasure'],
+        num_demo_participants=6,
+        rs=False)
 ]
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs

@@ -1,0 +1,16 @@
+{{ block title }}
+    End of the Practice Round Answers
+{{ endblock }}
+{{ block content }}
+
+<p>If this round was a real round, {{if player.agreed}} the difference between the agreed number and the number you sent (in this case: {{ if player.deviation > 0}}
+{{ player.deviation }} more{{else}}{{ if 0 > player.deviation }}
+{{ player.deviation }} less{{ else }}{{ player.deviation }}{{ endif }}{{ endif }})
+    would be displayed to{{if rs }} all five other participants{{else}} participant <b style="color:{{exchange_partner}}">{{exchange_partner }}</b>{{endif}} in all future rounds. {{else}}other participants would not receive information in future rounds about your decision in this round since you did not trade.{{endif}}
+</p>
+<p>The practice round is now over. Groups in the session have been re-shuffled. This means you will trade with other participants than in the practice round. As of now, you will be trading with the same five participants in all rounds. <b>From now on, your decisions will affect your payoff.</b></p>
+
+<br>
+    {{ next_button }}
+
+{{ endblock }}
