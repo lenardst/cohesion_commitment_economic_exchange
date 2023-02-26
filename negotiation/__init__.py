@@ -9,7 +9,7 @@ doc = """Negotiation between players"""
 
 
 class C(BaseConstants):
-    NAME_IN_URL = 'negotiation'
+    NAME_IN_URL = 'negotiation24'
     PLAYERS_PER_GROUP = 6
     NUM_ROUNDS = 26 #numpy.random.binomial(10, 0.5) + 20 + 1
     PAY_TRADED_UNIT = cu(0.03)
