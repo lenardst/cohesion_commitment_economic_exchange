@@ -11,7 +11,7 @@ doc = """Negotiation between players"""
 class C(BaseConstants):
     NAME_IN_URL = 'negotiation'
     PLAYERS_PER_GROUP = 6
-    NUM_ROUNDS = numpy.random.binomial(10, 0.5) + 20 + 1
+    NUM_ROUNDS = 25  # numpy.random.binomial(10, 0.5) + 20 + 1
     PAY_TRADED_UNIT = cu(0.03)
     PAY_BUDGET_UNIT = cu(0.01)
     UNIT_BUDGET = 15
@@ -20,6 +20,7 @@ class C(BaseConstants):
     QUESTION1 = 'If you agree to a trade that you receive 10 units, is it guaranteed that you will receive at least 10 units?'
     QUESTION2 = 'If you accept an offer, can another participant still accept an offer of yours in the same round?'
     QUESTION3 = 'Assume you agreed with another participant to send 10 units. If you now decide to send 9 instead of 10 units, how many other participants will learn about your decision?'
+
 
 pass
 
@@ -396,6 +397,7 @@ class Result(Page):
                 net_receive=0,
                 points_form_partner=0,
             )
+
     pass
 
 
