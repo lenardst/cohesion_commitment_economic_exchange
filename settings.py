@@ -9,6 +9,13 @@ SESSION_CONFIGS = [
          rs=True
      ),
     dict(
+        name='EcoEx_RS',
+        display_name="Economic Exchange and Reputation Systems (Baseline)",
+        app_sequence=['instruction', 'negotiation', 'scmeasure'],
+        num_demo_participants=6,
+        rs=False
+    ),
+    dict(
         name='EcoEx_NoRS_25',
          display_name="Economic Exchange and Reputation Systems (Baseline, 25 rounds)",
          app_sequence=['instruction', 'negotiation25', 'scmeasure'],
