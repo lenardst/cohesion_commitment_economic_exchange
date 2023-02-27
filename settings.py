@@ -47,6 +47,12 @@ ROOMS = [
         use_secure_urls=False,
         display_name='RoomB',
         participant_label_file='_rooms/roomT.txt'
+    ),
+    dict(
+        name='roomR',
+        use_secure_urls=False,
+        display_name='RoomR',
+        participant_label_file='_rooms/roomT.txt'
     )
 ]
 
