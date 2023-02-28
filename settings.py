@@ -1,13 +1,6 @@
 from os import environ
 
 SESSION_CONFIGS = [
-     dict(
-         name='EcoEx_RS',
-         display_name="Economic Exchange and Reputation Systems (Treatment)",
-         app_sequence=['instruction', 'negotiation', 'scmeasure'],
-         num_demo_participants=6,
-         rs=True
-     ),
     dict(
         name='EcoEx_NoRS',
         display_name="Economic Exchange and Reputation Systems (Baseline)",
@@ -15,12 +8,6 @@ SESSION_CONFIGS = [
         num_demo_participants=6,
         rs=False
     ),
-    dict(
-        name='EcoEx_NoRS_25',
-         display_name="Economic Exchange and Reputation Systems (Baseline, 25 rounds)",
-         app_sequence=['instruction', 'negotiation25', 'scmeasure'],
-         num_demo_participants=6,
-         rs=False),
     dict(
         name='EcoEx_NoRS_26',
         display_name="Economic Exchange and Reputation Systems (Baseline, 26 rounds)",
@@ -43,12 +30,6 @@ SESSION_FIELDS = []
 
 # ROOMS
 ROOMS = [
-    dict(
-        name='RoomT',
-        use_secure_urls=False,
-        display_name='RoomT',
-        participant_label_file='_rooms/roomT.txt'
-    ),
     dict(
         name='roomB',
         use_secure_urls=False,
