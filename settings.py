@@ -31,6 +31,12 @@ SESSION_FIELDS = []
 # ROOMS
 ROOMS = [
     dict(
+        name='RoomT',
+        use_secure_urls=False,
+        display_name='RoomT',
+        participant_label_file='_rooms/RoomT.txt'
+    ),
+    dict(
         name='roomB',
         use_secure_urls=False,
         display_name='RoomB',
