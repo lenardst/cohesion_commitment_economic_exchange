@@ -1,0 +1,64 @@
+# Date 14-05-2023
+# Name: Lenard Strahringer
+# This file generates the comparision between network structures between conditions
+
+# Add rank to df
+actor_df_ranks_gift <- actor_df %>%
+  group_by(actor_id) %>%
+  mutate(rank_gift = rank(-gift, ties.method='first')) %>%
+  ungroup() %>%
+  group_by(rs, rank_gift) %>%
+  summarize(mean_gift = mean(gift),
+            sd_gift = sd(gift),
+            n = n()) %>%
+  mutate(se_gift = sd_gift / sqrt(n),
+         t_val = qt(1 - .05 / 2, df = n - 1)) %>%
+  mutate(ci_lower_gift = mean_gift - t_val * se_gift,
+         ci_upper_gift = mean_gift + t_val * se_gift) %>%
+  dplyr::select(rs, rank_gift, mean_gift, ci_lower_gift, ci_upper_gift) %>%
+  ungroup()
+
+actor_df_ranks_scq <- actor_df %>%
+  group_by(actor_id) %>%
+  mutate(rank_scq = rank(-scq_total, ties.method='first')) %>%
+  ungroup() %>%
+  group_by(rs, rank_scq) %>%
+  dplyr::summarize(mean_scq = mean(scq_total),
+            sd_scq = sd(scq_total),
+            n = n()) %>%
+  mutate(se_scq = sd_scq / sqrt(n),
+         t_val = qt(1 - 0.05 / 2, df = n - 1)) %>%
+  mutate(ci_lower_scq = mean_scq - t_val * se_scq,
+         ci_upper_scq = mean_scq + t_val * se_scq) %>%
+  dplyr::select(rs, rank_scq, mean_scq, ci_lower_scq, ci_upper_scq) %>%
+  ungroup()
+
+# Draw plots combining the network structures between conditions
+plot1 = ggplot(actor_df_ranks_gift, aes(x = rank_gift, y = mean_gift, color = factor(rs))) +
+  geom_point(data = filter(actor_df_ranks_gift, rs == 0), size = 2) +
+  geom_errorbar(data = filter(actor_df_ranks_gift, rs == 0),
+                aes(ymin = ci_lower_gift, ymax = ci_upper_gift),
+                width = 0.2, size = 1.2, color = '#00bfc4') +
+  geom_point(data = filter(actor_df_ranks_gift, rs == 1), size = 2) +
+  geom_errorbar(data = filter(actor_df_ranks_gift, rs == 1),
+                aes(ymin = ci_lower_gift, ymax = ci_upper_gift),
+                width = 0.2, size = 1.2, color = "#f8766d") + ylim(0, 1) +
+  theme(legend.title = element_blank()) +
+  labs(x = "exchange relation rank", y = "social cohesion (gift)") +
+  scale_color_manual(values = c("#00bfc4", "#f8766d"), labels = c("no reputation system", "reputation system"))
+
+plot2 = ggplot(actor_df_ranks_scq, aes(x = rank_scq, y = mean_scq, color = factor(rs))) +
+  geom_point(data = filter(actor_df_ranks_scq, rs == 0), size = 2) +
+  geom_errorbar(data = filter(actor_df_ranks_scq, rs == 0),
+                aes(ymin = ci_lower_scq, ymax = ci_upper_scq),
+                width = 0.2, size = 1.2, color = '#00bfc4') +
+  geom_point(data = filter(actor_df_ranks_scq, rs == 1), size = 2) +
+  geom_errorbar(data = filter(actor_df_ranks_scq, rs == 1),
+                aes(ymin = ci_lower_scq, ymax = ci_upper_scq),
+                width = 0.2, size = 1.2, color = "#f8766d") +
+  labs(x = "exchange relation rank", y = "social cohesion (questionnaire)") +
+  theme(legend.title = element_blank()) + ylim(0, 1) +
+  scale_color_manual(values = c("#00bfc4", "#f8766d"), labels = c("no reputation system", "reputation system"))
+
+# Combine plots to figure
+ggarrange(plot1, plot2, ncol = 2, common.legend = TRUE, legend = 'bottom')

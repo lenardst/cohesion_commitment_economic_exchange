@@ -1,0 +1,26 @@
+{
+    "id": "BE753B50",
+    "path": "~/Documents/ExRS/Analysis/Analysis_MA/0.2_data_preparation.R",
+    "project_path": "Analysis/Analysis_MA/0.2_data_preparation.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1705110715518.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "269,0",
+        "scrollLine": "250"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1705111211,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1705111211669,
+    "read_only": false,
+    "read_only_alternatives": []
+}
