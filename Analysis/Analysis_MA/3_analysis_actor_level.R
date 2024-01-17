@@ -128,18 +128,22 @@ ggarrange(ggarrange(plot5, plot6, ncol = 2, nrow = 1,
 # Multivariate analysis without controls
 actor_df_panel <- pdata.frame(actor_df, index = c("actor_id"))
 
+# Calculate logged variable
+actor_df_panel$log_deviation_total_other = log(actor_df_panel$deviation_total_other-min(actor_df_panel$deviation_total_other)+1) - log(-min(actor_df_panel$deviation_total_other)+1)
+
+
 # Fit basic models 1 and 2
-basis_model_g_clustered <- plm(gift ~ log(deviation_total_other-min(deviation_total_other)+1) + log(number_of_trades + 1), data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
+basis_model_g_clustered <- plm(gift ~ log_deviation_total_other + log(number_of_trades + 1), data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
 summary(basis_model_g_clustered)
 
-basis_model_q_clustered <- plm(scq_total ~ log(deviation_total_other-min(deviation_total_other)+1) + log(number_of_trades + 1), data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
+basis_model_q_clustered <- plm(scq_total ~ log_deviation_total_other + log(number_of_trades + 1), data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
 summary(basis_model_q_clustered)
 
 # Fit models 3 and 4 including the interaction effect between rs and deviation
-inter_model_g <- plm(gift ~ log(deviation_total_other-min(deviation_total_other)+1) + log(number_of_trades + 1) + rs + rs:log(deviation_total_other-min(deviation_total_other)+1), data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
+inter_model_g <- plm(gift ~ log_deviation_total_other + log(number_of_trades + 1) + rs + rs:log_deviation_total_other, data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
 summary(inter_model_g)
 
-inter_model_q <- plm(scq_total ~ log(deviation_total_other-min(deviation_total_other)+1) + log(number_of_trades + 1) + rs + rs:log(deviation_total_other-min(deviation_total_other)+1), data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
+inter_model_q <- plm(scq_total ~ log_deviation_total_other + log(number_of_trades + 1) + rs + rs:log_deviation_total_other, data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
 summary(inter_model_q)
 
 # Create regression table
@@ -160,7 +164,6 @@ table <- stargazer(model_list,
                    model.numbers = TRUE, 
                    header = FALSE, 
                    column.sep.width = "0.05in",
-                   notes = 'All models have robust standard errors clustered at the ego level.',
                    omit.stat = "f",
                    star.cutoffs	= c(0.05, 0.01, 0.001),
                    covariate.labels=c('log(total deviation)',

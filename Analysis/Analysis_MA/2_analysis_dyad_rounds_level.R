@@ -7,7 +7,7 @@
 dyad_trades12 = dyad_trades[dyad_trades$exchange_number != '3',]
 
 # Normalize the variables
-dyad_trades12$log_prev_deviation_norm <- scale(log(dyad_trades12$prev_deviation - min(dyad_trades12$prev_deviation) + 1))
+dyad_trades12$log_prev_deviation_norm <- (log(dyad_trades12$prev_deviation - min(dyad_trades12$prev_deviation) + 1) - log(-min(dyad_trades12$prev_deviation) + 1))/sd(log(dyad_trades12$prev_deviation - min(dyad_trades12$prev_deviation) + 1))
 dyad_trades12$log_prev_number_of_exchanges_norm <- scale(log(dyad_trades12$prev_number_of_exchanges + 1))
 dyad_trades12$rep_distance_norm <- scale(dyad_trades12$rep_distance)
 dyad_trades12$priv_rep_distance_norm <- scale(dyad_trades12$priv_rep_distance)

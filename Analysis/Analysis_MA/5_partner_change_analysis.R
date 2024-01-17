@@ -165,7 +165,7 @@ dep_var <- c("Partner Change", "Partner Change", "New Partner", "New Partner")
 # generate the regression table using stargazer
 table <- stargazer(model_list, 
                    type = "latex", 
-                   title = "Logistic regression on partner change", 
+                   title = "Logistic multi-level regression results on partner change and new partner choice at the pair-dyad-round level (n = 14,962)", 
                    label = "tab:partner_change_regression",
                    model.numbers = TRUE, 
                    header = FALSE,

@@ -3,23 +3,23 @@
 # This file runs a series of robustness checks at the actor and the dyad round level
 
 # Robustness quadratic and positive negative 
-sign_model_g <- plm(gift ~ log(deviation_total_other-min(deviation_total_other)+1) + log(number_of_trades + 1) + rs + rs:log(deviation_total_other-min(deviation_total_other)+1) + (deviation_total_other>0), data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
+sign_model_g <- plm(gift ~ log_deviation_total_other + log(number_of_trades + 1) + rs + rs:log_deviation_total_other + (deviation_total_other>0), data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
 summary(sign_model_g)
 
-sign_model_q <- plm(scq_total ~ log(deviation_total_other-min(deviation_total_other)+1) + log(number_of_trades + 1) + rs + rs:log(deviation_total_other-min(deviation_total_other)+1)  + (deviation_total_other>0), data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
+sign_model_q <- plm(scq_total ~ log_deviation_total_other + log(number_of_trades + 1) + rs + rs:log_deviation_total_other  + (deviation_total_other>0), data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
 summary(sign_model_q)
 
 # Multivariate analysis with controls
-basis_model_g_clustered <- plm(gift ~ log(deviation_total_other-min(deviation_total_other)+1) + log(number_of_trades + 1) + as.numeric(age)  + sex, data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
+basis_model_g_clustered <- plm(gift ~ log_deviation_total_other + log(number_of_trades + 1) + as.numeric(age)  + sex, data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
 summary(basis_model_g_clustered)
 
-basis_model_q_clustered <- plm(scq_total ~ log(deviation_total_other-min(deviation_total_other)+1) + log(number_of_trades + 1) + as.numeric(age)  + sex, data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
+basis_model_q_clustered <- plm(scq_total ~ log_deviation_total_other + log(number_of_trades + 1) + as.numeric(age)  + sex, data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
 summary(basis_model_q_clustered)
 
-inter_model_g <- plm(gift ~ log(deviation_total_other-min(deviation_total_other)+1) + log(number_of_trades + 1) + rs + rs:log(deviation_total_other-min(deviation_total_other)+1) + as.numeric(age)  + sex, data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
+inter_model_g <- plm(gift ~ log_deviation_total_other + log(number_of_trades + 1) + rs + rs:log_deviation_total_other + as.numeric(age)  + sex, data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
 summary(inter_model_g)
 
-inter_model_q <- plm(scq_total ~ log(deviation_total_other-min(deviation_total_other)+1) + log(number_of_trades + 1) + rs + rs:log(deviation_total_other-min(deviation_total_other)+1) + as.numeric(age)  + sex, data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
+inter_model_q <- plm(scq_total ~ log_deviation_total_other + log(number_of_trades + 1) + rs + rs:log_deviation_total_other + as.numeric(age)  + sex, data = actor_df_panel, model = "pooling", vcov = vcovHC, cluster = "group")
 summary(inter_model_q)
 
 # Create regression table
