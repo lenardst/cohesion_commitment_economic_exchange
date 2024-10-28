@@ -267,4 +267,5 @@ dyad_trades$player_id_a1 <- paste(dyad_trades$group_id, dyad_trades$id_a1, sep =
 dyad_trades$player_id_a2 <- paste(dyad_trades$group_id, dyad_trades$id_a2, sep = "_")
 dyad_trades$dyad_id <- factor(paste(dyad_trades$player_id_a1, dyad_trades$player_id_a2, sep = "_"))
 
-
+save(dyad_trades, file='dyad_trades.Rda')
+save(actor_df, file='actor_df.Rda')

@@ -1,7 +1,7 @@
 # Date 14-05-2023
 # Name: Lenard Strahringer
 # This file runs the analysis on partner change and new partner choice at the dyad-round level
-
+load("dyad_trades.Rda")
 # Join dyad_trades with dyad_trades
 dyad_trades_pep <- dyad_trades # Make a copy of the original data frame
 

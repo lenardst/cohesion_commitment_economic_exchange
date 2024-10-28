@@ -1,7 +1,7 @@
 # Date 14-05-2023
 # Name: Lenard Strahringer
 # This file runs the analysis on cohesion at the actor level 
-
+load("actor_df.Rda")
 # Calculate Cronbach's alpha for questionnaire measure
 psych::alpha(subset(actor_df, select = c(close, cohesive, team, partners, harmonious)))
 

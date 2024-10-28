@@ -2,6 +2,7 @@
 # Name: Lenard Strahringer
 # This file runs the analysis on trade at the dyad round level
 
+load("dyad_trades.Rda")
 # dyad_trades analysis
   # Exclude third exchange in rounds because it is basically forced
 dyad_trades12 = dyad_trades[dyad_trades$exchange_number != '3',]
